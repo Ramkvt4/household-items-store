@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" fill="none">
+  <rect width="400" height="400" fill="#f0f4f8"/>
+  <rect x="90" y="120" width="220" height="160" rx="8" fill="#e8ecf0" stroke="#c5cdd8" stroke-width="2"/>
+  <rect x="100" y="130" width="140" height="140" rx="4" fill="#fff" stroke="#d0d8e0"/>
+  <rect x="250" y="130" width="50" height="140" rx="4" fill="#fff" stroke="#d0d8e0"/>
+  <circle cx="275" cy="160" r="12" fill="#2874f0" opacity="0.3"/>
+  <rect x="260" y="185" width="30" height="8" rx="2" fill="#8899aa"/>
+  <rect x="260" y="200" width="30" height="8" rx="2" fill="#8899aa"/>
+  <rect x="260" y="215" width="30" height="8" rx="2" fill="#8899aa"/>
+  <rect x="260" y="230" width="30" height="8" rx="2" fill="#8899aa"/>
+  <text x="200" y="370" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#8899aa">Microwave</text>
+</svg>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- SEO -->
+  <title>HomeAppliance Hub — Best Household Appliances Online</title>
+  <meta name="description" content="Shop premium household appliances — refrigerators, washing machines, microwaves, air conditioners and more. Best prices, fast delivery, trusted brands.">
+  <meta name="keywords" content="household appliances, home appliances, refrigerator, washing machine, microwave, air conditioner, online store">
+  <meta name="author" content="HomeAppliance Hub">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://homeappliancehub.example.com/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="HomeAppliance Hub — Best Household Appliances Online">
+  <meta property="og:description" content="Shop premium household appliances at unbeatable prices.">
+  <meta property="og:url" content="https://homeappliancehub.example.com/">
+  <meta property="og:locale" content="en_IN">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="HomeAppliance Hub">
+  <meta name="twitter:description" content="Shop premium household appliances online.">
+
+  <!-- Performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+</head>
+<body>
+  <!-- Skip link for accessibility -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Header -->
+  <header class="header" role="banner">
+    <div class="header__top">
+      <div class="container header__top-inner">
+        <a href="index.html" class="logo" aria-label="HomeAppliance Hub Home">
+          <svg class="logo__icon" viewBox="0 0 32 32" aria-hidden="true">
+            <rect x="4" y="8" width="24" height="20" rx="2" fill="currentColor" opacity="0.15"/>
+            <path d="M8 12h16M8 16h12M8 20h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span class="logo__text">HomeAppliance<span class="logo__accent">Hub</span></span>
+        </a>
+
+        <div class="search-bar" role="search">
+          <label for="search-input" class="visually-hidden">Search products</label>
+          <input
+            type="search"
+            id="search-input"
+            class="search-bar__input"
+            placeholder="Search for appliances, brands and more..."
+            autocomplete="off"
+            aria-describedby="search-results-count"
+          >
+          <button type="button" class="search-bar__btn" id="search-btn" aria-label="Search">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M16 16l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <nav class="header__actions" aria-label="Quick actions">
+          <button type="button" class="header__action" id="cart-toggle" aria-label="View cart">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+              <path d="M6 6h15l-1.5 9H7.5L6 6zM6 6L5 3H2" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <circle cx="9" cy="20" r="1.5" fill="currentColor"/>
+              <circle cx="18" cy="20" r="1.5" fill="currentColor"/>
+            </svg>
+            <span class="header__action-label">Cart</span>
+            <span class="cart-badge" id="cart-count" aria-live="polite">0</span>
+          </button>
+          <button type="button" class="header__action mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu" aria-expanded="false">
+            <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+              <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </nav>
+      </div>
+    </div>
+
+    <nav class="header__nav" id="main-nav" aria-label="Main navigation">
+      <div class="container">
+        <ul class="nav-list">
+          <li><a href="#hero" class="nav-link">Home</a></li>
+          <li><a href="#categories" class="nav-link">Categories</a></li>
+          <li><a href="#products" class="nav-link">All Products</a></li>
+          <li><a href="#deals" class="nav-link">Deals</a></li>
+          <li><a href="#footer" class="nav-link">Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main-content">
+    <!-- Hero Banner -->
+    <section class="hero" id="hero" aria-label="Featured promotions">
+      <div class="hero__slider" id="hero-slider">
+        <div class="hero__slide hero__slide--active" data-slide="0">
+          <div class="hero__content container">
+            <span class="hero__badge">Summer Sale</span>
+            <h1 class="hero__title">Upgrade Your Home with Smart Appliances</h1>
+            <p class="hero__desc">Up to 40% off on refrigerators, ACs &amp; washing machines. Free installation on select models.</p>
+            <a href="#products" class="btn btn--primary btn--lg">Shop Now</a>
+          </div>
+          <div class="hero__visual" aria-hidden="true">
+            <div class="hero__icon-grid">
+              <div class="hero__icon-item">❄️</div>
+              <div class="hero__icon-item">🧺</div>
+              <div class="hero__icon-item">📺</div>
+              <div class="hero__icon-item">🍳</div>
+            </div>
+          </div>
+        </div>
+        <div class="hero__slide" data-slide="1">
+          <div class="hero__content container">
+            <span class="hero__badge hero__badge--green">New Arrivals</span>
+            <h2 class="hero__title">Energy-Efficient Appliances</h2>
+            <p class="hero__desc">Save on electricity bills with 5-star rated appliances from top brands.</p>
+            <a href="#categories" class="btn btn--primary btn--lg">Explore Categories</a>
+          </div>
+          <div class="hero__visual" aria-hidden="true">
+            <div class="hero__icon-grid">
+              <div class="hero__icon-item">⚡</div>
+              <div class="hero__icon-item">🌿</div>
+              <div class="hero__icon-item">🏠</div>
+            </div>
+          </div>
+        </div>
+        <div class="hero__slide" data-slide="2">
+          <div class="hero__content container">
+            <span class="hero__badge hero__badge--purple">Best Sellers</span>
+            <h2 class="hero__title">Kitchen Essentials Delivered Fast</h2>
+            <p class="hero__desc">Microwaves, mixers, and cooktops — everything you need for a modern kitchen.</p>
+            <a href="#products" class="btn btn--primary btn--lg">View Best Sellers</a>
+          </div>
+          <div class="hero__visual" aria-hidden="true">
+            <div class="hero__icon-grid">
+              <div class="hero__icon-item">🍽️</div>
+              <div class="hero__icon-item">☕</div>
+              <div class="hero__icon-item">🔥</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hero__dots" id="hero-dots" role="tablist" aria-label="Hero slides"></div>
+    </section>
+
+    <!-- Trust Bar -->
+    <section class="trust-bar" aria-label="Store benefits">
+      <div class="container trust-bar__grid">
+        <div class="trust-bar__item">
+          <span class="trust-bar__icon" aria-hidden="true">🚚</span>
+          <div>
+            <strong>Free Delivery</strong>
+            <span>On orders above ₹5,000</span>
+          </div>
+        </div>
+        <div class="trust-bar__item">
+          <span class="trust-bar__icon" aria-hidden="true">🔒</span>
+          <div>
+            <strong>Secure Payment</strong>
+            <span>100% protected checkout</span>
+          </div>
+        </div>
+        <div class="trust-bar__item">
+          <span class="trust-bar__icon" aria-hidden="true">🛡️</span>
+          <div>
+            <strong>Warranty</strong>
+            <span>Official brand warranty</span>
+          </div>
+        </div>
+        <div class="trust-bar__item">
+          <span class="trust-bar__icon" aria-hidden="true">💬</span>
+          <div>
+            <strong>WhatsApp Support</strong>
+            <span>Quick product inquiries</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="categories section" id="categories" aria-labelledby="categories-heading">
+      <div class="container">
+        <div class="section__header">
+          <h2 id="categories-heading" class="section__title">Shop by Category</h2>
+          <p class="section__subtitle">Find the perfect appliance for every room</p>
+        </div>
+        <div class="categories__grid" id="categories-grid" role="list">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Products -->
+    <section class="products section" id="products" aria-labelledby="products-heading">
+      <div class="container">
+        <div class="section__header section__header--flex">
+          <div>
+            <h2 id="products-heading" class="section__title">Featured Products</h2>
+            <p class="section__subtitle" id="search-results-count">Showing all products</p>
+          </div>
+          <div class="products__filters">
+            <label for="category-filter" class="visually-hidden">Filter by category</label>
+            <select id="category-filter" class="select" aria-label="Filter by category">
+              <option value="all">All Categories</option>
+            </select>
+            <label for="sort-filter" class="visually-hidden">Sort products</label>
+            <select id="sort-filter" class="select" aria-label="Sort products">
+              <option value="featured">Featured</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="rating">Top Rated</option>
+              <option value="name">Name A-Z</option>
+            </select>
+          </div>
+        </div>
+        <div class="products__grid" id="products-grid" role="list">
+          <!-- Populated by JS -->
+        </div>
+        <div class="products__empty" id="products-empty" hidden>
+          <p>No products found matching your search.</p>
+          <button type="button" class="btn btn--secondary" id="clear-search">Clear Search</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Deals Banner -->
+    <section class="deals section" id="deals" aria-labelledby="deals-heading">
+      <div class="container">
+        <h2 id="deals-heading" class="visually-hidden">Special Deals</h2>
+        <div class="deals__banner">
+          <div class="deals__content">
+            <span class="deals__tag">Limited Time</span>
+            <h3 class="deals__title">Flash Sale — Extra 15% Off</h3>
+            <p class="deals__desc">Use code <strong>HOME15</strong> at checkout. Valid on selected items.</p>
+            <a href="#products" class="btn btn--white">Grab the Deal</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" id="footer" role="contentinfo">
+    <div class="container footer__grid">
+      <div class="footer__brand">
+        <a href="index.html" class="logo logo--footer">
+          <span class="logo__text">HomeAppliance<span class="logo__accent">Hub</span></span>
+        </a>
+        <p>Your trusted destination for premium household appliances. Quality products, competitive prices, and exceptional service.</p>
+      </div>
+      <nav aria-label="Footer navigation">
+        <h3 class="footer__heading">Quick Links</h3>
+        <ul class="footer__links">
+          <li><a href="#products">All Products</a></li>
+          <li><a href="#categories">Categories</a></li>
+          <li><a href="#deals">Deals</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h3 class="footer__heading">Contact Us</h3>
+        <ul class="footer__links">
+          <li><a href="tel:+919876543210">+91 98765 43210</a></li>
+          <li><a href="mailto:info@homeappliancehub.com">info@homeappliancehub.com</a></li>
+          <li><a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer">WhatsApp Us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__heading">Store Info</h3>
+        <address class="footer__address">
+          123 Commerce Street<br>
+          Mumbai, Maharashtra 400001<br>
+          India
+        </address>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <div class="container footer__bottom-inner">
+        <p>&copy; <span id="current-year"></span> HomeAppliance Hub. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Product Detail Modal -->
+  <div class="modal" id="product-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+    <div class="modal__overlay" id="modal-overlay"></div>
+    <div class="modal__container">
+      <button type="button" class="modal__close" id="modal-close" aria-label="Close product details">
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="modal__content" id="modal-content">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Sidebar -->
+  <aside class="cart-sidebar" id="cart-sidebar" aria-label="Shopping cart" hidden>
+    <div class="cart-sidebar__overlay" id="cart-overlay"></div>
+    <div class="cart-sidebar__panel">
+      <div class="cart-sidebar__header">
+        <h2 class="cart-sidebar__title">Your Cart</h2>
+        <button type="button" class="cart-sidebar__close" id="cart-close" aria-label="Close cart">
+          <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="cart-sidebar__items" id="cart-items"></div>
+      <div class="cart-sidebar__footer">
+        <div class="cart-sidebar__total">
+          <span>Total:</span>
+          <strong id="cart-total">₹0</strong>
+        </div>
+        <button type="button" class="btn btn--whatsapp btn--block" id="cart-whatsapp">
+          Inquire via WhatsApp
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Floating WhatsApp -->
+  <a
+    href="https://wa.me/919876543210?text=Hi!%20I%20need%20help%20choosing%20a%20household%20appliance."
+    class="whatsapp-float"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Chat with us on WhatsApp"
+  >
+    <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+      <path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.884 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  </a>
+
+  <!-- Schema.org structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    "name": "HomeAppliance Hub",
+    "description": "Online store for household appliances",
+    "url": "https://homeappliancehub.example.com",
+    "telephone": "+919876543210",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "123 Commerce Street",
+      "addressLocality": "Mumbai",
+      "addressRegion": "Maharashtra",
+      "postalCode": "400001",
+      "addressCountry": "IN"
+    }
+  }
+  </script>
+
+  <!-- Firebase SDK (uncomment when ready) -->
+  <!--
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js" defer></script>
+  -->
+
+  <script src="js/config/firebase-config.js" defer></script>
+  <script src="js/data/products.js" defer></script>
+  <script src="js/modules/search.js" defer></script>
+  <script src="js/modules/modal.js" defer></script>
+  <script src="js/modules/cart.js" defer></script>
+  <script src="js/app.js" defer></script>
+</body>
+</html>
