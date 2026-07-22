@@ -1,21 +1,9 @@
 /**
- * Product & Category Data
- * Used as fallback when Firebase is disabled.
- * Can be replaced by Firestore fetch when FirebaseConfig.USE_FIREBASE is true.
+ * Seed product data — used ONLY for initial Firestore import via admin.
+ * Storefront loads products from Firebase Firestore at runtime.
  */
 
 const STORE_DATA = {
-  categories: [
-    { id: 'refrigerators', name: 'Refrigerators', icon: '❄️' },
-    { id: 'washing-machines', name: 'Washing Machines', icon: '🧺' },
-    { id: 'air-conditioners', name: 'Air Conditioners', icon: '🌬️' },
-    { id: 'microwaves', name: 'Microwaves', icon: '📻' },
-    { id: 'televisions', name: 'Televisions', icon: '📺' },
-    { id: 'kitchen', name: 'Kitchen Appliances', icon: '🍳' },
-    { id: 'water-purifiers', name: 'Water Purifiers', icon: '💧' },
-    { id: 'vacuum-cleaners', name: 'Vacuum Cleaners', icon: '🧹' },
-  ],
-
   products: [
     {
       id: 'prod-001',

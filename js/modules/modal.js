@@ -36,9 +36,18 @@ const ModalModule = (() => {
     previouslyFocused = document.activeElement;
 
     const stars = renderStars(product.rating);
-    const discount = product.originalPrice
+    const discount = product.discount || (product.originalPrice
       ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-      : 0;
+      : 0);
+
+    const images = product.images?.length ? product.images : [ProductUtils.getPrimaryImage(product)];
+    const galleryHtml = images.length > 1
+      ? `<div class="modal__gallery">${images.map((url, i) => `
+          <button type="button" class="modal__thumb${i === 0 ? ' modal__thumb--active' : ''}" data-image="${url}" aria-label="View image ${i + 1}">
+            <img src="${url}" alt="" width="64" height="64">
+          </button>
+        `).join('')}</div>`
+      : '';
 
     const specsHtml = product.specs
       ? Object.entries(product.specs)
@@ -46,19 +55,24 @@ const ModalModule = (() => {
           .join('')
       : '';
 
-    const whatsappMessage = `Hi! I'm interested in:\n\n*${product.name}*\nBrand: ${product.brand}\nPrice: ₹${formatPrice(product.price)}\n\nPlease share more details.`;
+    const whatsappMessage = `Hi! I'm interested in:\n\n*${product.name}*\nBrand: ${product.brand}\nPrice: ₹${ProductUtils.formatPrice(product.price)}\n\nPlease share more details.`;
     const whatsappUrl = FirebaseConfig.getWhatsAppUrl(whatsappMessage);
+    const stockLabel = product.inStock
+      ? `<span class="modal__stock modal__stock--in">In Stock (${product.stock} available)</span>`
+      : `<span class="modal__stock modal__stock--out">Out of Stock</span>`;
 
     contentEl.innerHTML = `
       <div class="modal__image-wrap">
         <img
           class="modal__image"
-          src="${product.image}"
+          id="modal-main-image"
+          src="${images[0]}"
           alt="${product.name}"
           width="400"
           height="400"
           loading="lazy"
         >
+        ${galleryHtml}
       </div>
       <div class="modal__info">
         <span class="modal__brand">${product.brand}</span>
@@ -67,9 +81,10 @@ const ModalModule = (() => {
           <div class="stars">${stars}</div>
           <span class="rating-count">${product.rating} (${product.reviewCount?.toLocaleString('en-IN') || 0} reviews)</span>
         </div>
+        ${stockLabel}
         <div class="modal__price product-card__price">
-          <span class="modal__price-current">₹${formatPrice(product.price)}</span>
-          ${product.originalPrice ? `<span class="modal__price-original">₹${formatPrice(product.originalPrice)}</span>` : ''}
+          <span class="modal__price-current">₹${ProductUtils.formatPrice(product.price)}</span>
+          ${product.originalPrice ? `<span class="modal__price-original">₹${ProductUtils.formatPrice(product.originalPrice)}</span>` : ''}
           ${discount > 0 ? `<span class="product-card__price-off">${discount}% off</span>` : ''}
         </div>
         <p class="modal__desc">${product.description || ''}</p>
@@ -80,8 +95,8 @@ const ModalModule = (() => {
           </div>
         ` : ''}
         <div class="modal__actions">
-          <button type="button" class="btn btn--accent" data-action="add-to-cart" data-product-id="${product.id}">
-            Add to Cart
+          <button type="button" class="btn btn--accent" data-action="add-to-cart" data-product-id="${product.id}" ${!product.inStock ? 'disabled' : ''}>
+            ${product.inStock ? 'Add to Cart' : 'Out of Stock'}
           </button>
           <a href="${whatsappUrl}" class="btn btn--whatsapp" target="_blank" rel="noopener noreferrer">
             <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
@@ -93,8 +108,17 @@ const ModalModule = (() => {
       </div>
     `;
 
+    contentEl.querySelectorAll('.modal__thumb').forEach((thumb) => {
+      thumb.addEventListener('click', () => {
+        const mainImg = document.getElementById('modal-main-image');
+        if (mainImg) mainImg.src = thumb.dataset.image;
+        contentEl.querySelectorAll('.modal__thumb').forEach((t) => t.classList.remove('modal__thumb--active'));
+        thumb.classList.add('modal__thumb--active');
+      });
+    });
+
     contentEl.querySelector('[data-action="add-to-cart"]')?.addEventListener('click', () => {
-      CartModule.addItem(product);
+      if (product.inStock) CartModule.addItem(product);
     });
 
     modal.hidden = false;
@@ -128,7 +152,7 @@ const ModalModule = (() => {
   }
 
   function formatPrice(price) {
-    return price.toLocaleString('en-IN');
+    return ProductUtils.formatPrice(price);
   }
 
   return { init, open, close };

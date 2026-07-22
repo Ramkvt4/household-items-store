@@ -39,6 +39,8 @@ const CartModule = (() => {
   }
 
   function addItem(product) {
+    if (product.inStock === false) return;
+
     const existing = items.find((item) => item.id === product.id);
 
     if (existing) {
@@ -49,7 +51,7 @@ const CartModule = (() => {
         name: product.name,
         brand: product.brand,
         price: product.price,
-        image: product.image,
+        image: ProductUtils.getPrimaryImage(product),
         quantity: 1,
       });
     }
@@ -184,7 +186,9 @@ const CartModule = (() => {
   }
 
   function formatPrice(price) {
-    return price.toLocaleString('en-IN');
+    return typeof ProductUtils !== 'undefined'
+      ? ProductUtils.formatPrice(price)
+      : Number(price).toLocaleString('en-IN');
   }
 
   function getItems() {

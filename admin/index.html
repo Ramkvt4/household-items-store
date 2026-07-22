@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — HomeAppliance Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="icon" type="image/svg+xml" href="../assets/images/favicon.svg">
+</head>
+<body class="admin-body">
+
+  <!-- Login Screen -->
+  <div id="login-screen" class="admin-login">
+    <div class="admin-login__card">
+      <h1 class="admin-login__title">Admin Dashboard</h1>
+      <p class="admin-login__subtitle">Sign in to manage products</p>
+      <form id="login-form">
+        <div class="admin-form__group">
+          <label class="admin-form__label" for="login-email">Email</label>
+          <input type="email" id="login-email" class="admin-form__input" required autocomplete="email">
+        </div>
+        <div class="admin-form__group">
+          <label class="admin-form__label" for="login-password">Password</label>
+          <input type="password" id="login-password" class="admin-form__input" required autocomplete="current-password">
+        </div>
+        <p id="login-error" class="admin-form__hint" style="color: var(--color-danger);" hidden></p>
+        <button type="submit" class="btn btn--accent btn--block" style="margin-top: 1rem;">Sign In</button>
+      </form>
+      <p style="margin-top: 1rem; text-align: center; font-size: var(--font-size-sm);">
+        <a href="../index.html">← Back to Store</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard" class="admin-layout" hidden>
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar__brand">HomeAppliance<span>Hub</span></div>
+      <nav class="admin-sidebar__nav">
+        <a href="#" class="admin-sidebar__link admin-sidebar__link--active" data-view="products">Products</a>
+        <a href="#" class="admin-sidebar__link" data-view="add">Add Product</a>
+      </nav>
+      <div class="admin-sidebar__footer">
+        <p id="admin-user-email"></p>
+        <button type="button" class="btn btn--secondary btn--sm btn--block" id="logout-btn" style="margin-top: 0.5rem;">Sign Out</button>
+        <a href="../index.html" class="admin-sidebar__link" style="padding: 0.5rem 0; margin-top: 0.5rem;">View Store →</a>
+      </div>
+    </aside>
+
+    <div class="admin-main">
+      <header class="admin-header">
+        <h1 class="admin-header__title" id="page-title">Products</h1>
+        <div class="admin-header__actions">
+          <button type="button" class="btn btn--secondary btn--sm" id="seed-btn">Import Sample Data</button>
+          <button type="button" class="btn btn--primary btn--sm" id="add-product-btn">+ Add Product</button>
+        </div>
+      </header>
+
+      <main class="admin-content">
+        <!-- Products List View -->
+        <section id="view-products">
+          <div class="admin-stats">
+            <div class="admin-stat">
+              <div class="admin-stat__label">Total Products</div>
+              <div class="admin-stat__value" id="stat-total">0</div>
+            </div>
+            <div class="admin-stat">
+              <div class="admin-stat__label">In Stock</div>
+              <div class="admin-stat__value" id="stat-instock">0</div>
+            </div>
+            <div class="admin-stat">
+              <div class="admin-stat__label">Out of Stock</div>
+              <div class="admin-stat__value" id="stat-outstock">0</div>
+            </div>
+          </div>
+
+          <div class="admin-table-wrap">
+            <div id="products-loading" class="admin-loading">Loading products...</div>
+            <table class="admin-table" id="products-table" hidden>
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Discount</th>
+                  <th>Stock</th>
+                  <th>Rating</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="products-tbody"></tbody>
+            </table>
+            <div id="products-empty" class="admin-empty" hidden>
+              <p>No products yet.</p>
+              <button type="button" class="btn btn--primary" id="empty-add-btn">Add Your First Product</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Add/Edit Product Form -->
+        <section id="view-form" hidden>
+          <form id="product-form" class="admin-form">
+            <input type="hidden" id="product-id">
+            <div class="admin-form__grid">
+              <div class="admin-form__group admin-form__group--full">
+                <label class="admin-form__label" for="product-name">Product Name *</label>
+                <input type="text" id="product-name" class="admin-form__input" required>
+              </div>
+              <div class="admin-form__group">
+                <label class="admin-form__label" for="product-brand">Brand *</label>
+                <input type="text" id="product-brand" class="admin-form__input" required>
+              </div>
+              <div class="admin-form__group">
+                <label class="admin-form__label" for="product-category">Category *</label>
+                <select id="product-category" class="admin-form__select" required></select>
+              </div>
+              <div class="admin-form__group">
+                <label class="admin-form__label" for="product-price">Price (₹) *</label>
+                <input type="number" id="product-price" class="admin-form__input" min="0" step="1" required>
+              </div>
+              <div class="admin-form__group">
+                <label class="admin-form__label" for="product-discount">Discount (%)</label>
+                <input type="number" id="product-discount" class="admin-form__input" min="0" max="99" step="1" value="0">
+              </div>
+              <div class="admin-form__group">
+                <label class="admin-form__label" for="product-rating">Rating (0–5)</label>
+                <input type="number" id="product-rating" class="admin-form__input" min="0" max="5" step="0.1" value="4">
+              </div>
+              <div class="admin-form__group">
+                <label class="admin-form__label" for="product-stock">Stock *</label>
+                <input type="number" id="product-stock" class="admin-form__input" min="0" step="1" value="10" required>
+              </div>
+              <div class="admin-form__group admin-form__group--full">
+                <label class="admin-form__label" for="product-description">Description</label>
+                <textarea id="product-description" class="admin-form__textarea"></textarea>
+              </div>
+              <div class="admin-form__group admin-form__group--full">
+                <label class="admin-form__label" for="product-images">Product Images</label>
+                <input type="file" id="product-images" class="admin-form__input" accept="image/*" multiple>
+                <p class="admin-form__hint">Upload one or more images. Existing images are kept unless removed.</p>
+                <div class="admin-images" id="existing-images"></div>
+              </div>
+              <div class="admin-form__group">
+                <label class="admin-form__label">
+                  <input type="checkbox" id="product-featured"> Featured product
+                </label>
+              </div>
+            </div>
+            <div class="admin-form__actions">
+              <button type="submit" class="btn btn--accent" id="save-btn">Save Product</button>
+              <button type="button" class="btn btn--secondary" id="cancel-form-btn">Cancel</button>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation -->
+  <div class="modal" id="delete-modal" role="dialog" aria-modal="true" hidden>
+    <div class="modal__overlay" id="delete-overlay"></div>
+    <div class="modal__container" style="max-width: 440px;">
+      <div style="padding: 2rem;">
+        <h2 style="font-size: var(--font-size-lg); margin-bottom: 0.5rem;">Delete Product?</h2>
+        <p style="color: var(--color-text-muted); margin-bottom: 1.5rem;" id="delete-message">This action cannot be undone.</p>
+        <div style="display: flex; gap: 0.75rem;">
+          <button type="button" class="btn btn--accent" id="confirm-delete-btn" style="background: var(--color-danger);">Delete</button>
+          <button type="button" class="btn btn--secondary" id="cancel-delete-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+
+  <script src="../js/config/firebase-config.js"></script>
+  <script src="../js/data/categories.js"></script>
+  <script src="../js/data/products.js"></script>
+  <script src="../js/utils/product-utils.js"></script>
+  <script src="../js/modules/product-service.js"></script>
+  <script src="../js/modules/storage-service.js"></script>
+  <script src="../js/modules/auth-service.js"></script>
+  <script src="../js/admin-app.js"></script>
+</body>
+</html>

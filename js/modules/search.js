@@ -153,7 +153,7 @@ const SearchModule = (() => {
     if (currentQuery) {
       countEl.textContent = `${filteredProducts.length} result${filteredProducts.length !== 1 ? 's' : ''} for "${currentQuery}"`;
     } else if (currentCategory !== 'all') {
-      const category = STORE_DATA.categories.find((c) => c.id === currentCategory);
+      const category = (typeof CATEGORIES !== 'undefined' ? CATEGORIES : []).find((c) => c.id === currentCategory);
       countEl.textContent = `${filteredProducts.length} product${filteredProducts.length !== 1 ? 's' : ''} in ${category?.name || currentCategory}`;
     } else {
       countEl.textContent = `Showing all ${filteredProducts.length} products`;

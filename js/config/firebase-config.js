@@ -1,118 +1,128 @@
 /**
  * Firebase Configuration
- * --------------------
- * Replace placeholder values with your Firebase project credentials.
- * Get them from: Firebase Console → Project Settings → Your apps → SDK setup
- *
- * SETUP STEPS:
+ * ----------------------
  * 1. Create a project at https://console.firebase.google.com
- * 2. Enable Firestore Database and Authentication (optional)
- * 3. Replace the config object below
- * 4. Uncomment Firebase SDK scripts in index.html
- * 5. Set USE_FIREBASE to true
+ * 2. Enable Authentication (Email/Password), Firestore, and Storage
+ * 3. Paste your web app config below
+ * 4. Deploy rules from /firebase/ via Firebase CLI
+ * 5. Add admin emails to adminEmails array
  */
 
 const FirebaseConfig = {
-  USE_FIREBASE: false,
-
   config: {
-    apiKey: 'YOUR_API_KEY',
-    authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
-    projectId: 'YOUR_PROJECT_ID',
-    storageBucket: 'YOUR_PROJECT_ID.appspot.com',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    appId: 'YOUR_APP_ID',
+    apiKey: 'AIzaSyDkkqKv_RzpTGkDB2dmEdjUKuiwkaFBy8w',
+    authDomain: 'homeappliance-hub.firebaseapp.com',
+    projectId: 'homeappliance-hub',
+    storageBucket: 'homeappliance-hub.firebasestorage.app',
+    messagingSenderId: '775949673512',
+    appId: '1:775949673512:web:6d0278a527a705dee0011d',
+    measurementId: 'G-QZZ5SDJT84',
   },
 
-  /** Firestore collection names */
+  /** Emails allowed to access the admin dashboard */
+  adminEmails: [
+    'jioraichu@gmail.com',
+  ],
+
   collections: {
     products: 'products',
     categories: 'categories',
     orders: 'orders',
     inquiries: 'inquiries',
+    admins: 'admins',
   },
 
-  /** WhatsApp business number (country code, no + or spaces) */
-  whatsappNumber: '919876543210',
+  storagePaths: {
+    products: 'products',
+  },
 
-  /**
-   * Initialize Firebase — call after SDK scripts are loaded
-   * @returns {object|null} Firestore instance or null if disabled
-   */
+  whatsappNumber: '918919114283', //test
+
+  _db: null,
+  _storage: null,
+  _auth: null,
+  _initialized: false,
+
+  isConfigured() {
+    return this.config.apiKey && !this.config.apiKey.includes('YOUR_');
+  },
+
   init() {
-    if (!this.USE_FIREBASE) {
-      console.info('[Firebase] Running in local mode. Set USE_FIREBASE to true to connect.');
-      return null;
+    if (!this.isConfigured()) {
+      console.warn('[Firebase] Add your project credentials in js/config/firebase-config.js');
+      return { db: null, storage: null, auth: null };
     }
 
     if (typeof firebase === 'undefined') {
-      console.error('[Firebase] SDK not loaded. Uncomment Firebase scripts in index.html.');
-      return null;
+      console.error('[Firebase] SDK not loaded. Check script tags in index.html');
+      return { db: null, storage: null, auth: null };
     }
 
-    try {
-      if (!firebase.apps.length) {
-        firebase.initializeApp(this.config);
+    if (!this._initialized) {
+      try {
+        if (!firebase.apps.length) {
+          firebase.initializeApp(this.config);
+        }
+        this._db = firebase.firestore();
+        this._storage = firebase.storage();
+        this._auth = firebase.auth();
+        this._initialized = true;
+      } catch (error) {
+        console.error('[Firebase] Initialization failed:', error);
+        return { db: null, storage: null, auth: null };
       }
-      const db = firebase.firestore();
-      console.info('[Firebase] Connected successfully.');
+    }
+
+    return {
+      db: this._db,
+      storage: this._storage,
+      auth: this._auth,
+    };
+  },
+
+  /**
+   * Verify Firestore connectivity (does not read or write products)
+   * @returns {Promise<object|null>} Firestore instance
+   */
+  async connectFirestore() {
+    try {
+      const { db } = this.init();
+
+      if (!db) {
+        throw new Error('Firestore could not be initialized. Check SDK scripts and firebase-config.js credentials.');
+      }
+
+      await db.collection('connection_check').doc('ping').get();
+      console.log('Firebase Connected Successfully');
       return db;
     } catch (error) {
-      console.error('[Firebase] Initialization failed:', error);
-      return null;
+      console.error(error);
+      throw error;
     }
   },
 
-  /**
-   * Fetch products from Firestore
-   * @param {object} db - Firestore instance
-   * @returns {Promise<Array>}
-   */
-  async fetchProducts(db) {
-    if (!db) return null;
-
-    try {
-      const snapshot = await db.collection(this.collections.products).get();
-      return snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-    } catch (error) {
-      console.error('[Firebase] Failed to fetch products:', error);
-      return null;
-    }
+  get db() {
+    return this._db;
   },
 
-  /**
-   * Save an inquiry to Firestore
-   * @param {object} db - Firestore instance
-   * @param {object} inquiry - Inquiry data
-   */
-  async saveInquiry(db, inquiry) {
-    if (!db) return;
-
-    try {
-      await db.collection(this.collections.inquiries).add({
-        ...inquiry,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      });
-    } catch (error) {
-      console.error('[Firebase] Failed to save inquiry:', error);
-    }
+  get storage() {
+    return this._storage;
   },
 
-  /**
-   * Build WhatsApp inquiry URL
-   * @param {string} message - Pre-filled message
-   * @returns {string}
-   */
+  get auth() {
+    return this._auth;
+  },
+
   getWhatsAppUrl(message) {
-    const encoded = encodeURIComponent(message);
-    return `https://wa.me/${this.whatsappNumber}?text=${encoded}`;
+    return `https://wa.me/${this.whatsappNumber}?text=${encodeURIComponent(message)}`;
+  },
+
+  isAdminEmail(email) {
+    if (!email) return false;
+    return this.adminEmails.map((e) => e.toLowerCase()).includes(email.toLowerCase());
   },
 };
 
-// Export for module usage
 if (typeof window !== 'undefined') {
   window.FirebaseConfig = FirebaseConfig;
 }

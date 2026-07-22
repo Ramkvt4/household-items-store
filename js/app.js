@@ -9,17 +9,23 @@ const App = (() => {
   let currentSlide = 0;
 
   async function init() {
-    const db = FirebaseConfig.init();
-    await loadData(db);
+    try {
+      await FirebaseConfig.connectFirestore();
+    } catch (error) {
+      // Error logged by connectFirestore
+    }
 
+    showLoading(true);
+
+    await loadData();
     renderCategories();
     populateCategoryFilter();
-
     SearchModule.init(products);
     renderProducts(SearchModule.getFilteredProducts());
+    showLoading(false);
+
     ModalModule.init();
     CartModule.init();
-
     initHeroSlider();
     initMobileMenu();
     initFooterYear();
@@ -29,18 +35,52 @@ const App = (() => {
     });
   }
 
-  async function loadData(db) {
-    if (db) {
-      const remoteProducts = await FirebaseConfig.fetchProducts(db);
-      if (remoteProducts?.length) {
-        products = remoteProducts;
-        categories = STORE_DATA.categories;
-        return;
-      }
+  async function loadData() {
+    categories = typeof CATEGORIES !== 'undefined' ? CATEGORIES : [];
+    products = [];
+
+    const { db } = FirebaseConfig.init();
+    if (!db) {
+      console.error('[App] Firestore unavailable — no products loaded');
+      return;
     }
 
-    products = STORE_DATA.products;
-    categories = STORE_DATA.categories;
+    ProductService.init(db);
+    products = await ProductService.getAll();
+  }
+
+  function showLoading(show) {
+    const grid = document.getElementById('products-grid');
+    const empty = document.getElementById('products-empty');
+    if (!grid) return;
+
+    if (show) {
+      if (empty) empty.hidden = true;
+      grid.innerHTML = Array.from({ length: 8 }, () => `
+        <div class="product-card product-card--skeleton" aria-hidden="true">
+          <div class="skeleton product-card__image-wrap" style="aspect-ratio:1"></div>
+          <div class="product-card__body">
+            <div class="skeleton" style="height:12px;width:40%;margin-bottom:8px"></div>
+            <div class="skeleton" style="height:16px;width:90%;margin-bottom:8px"></div>
+            <div class="skeleton" style="height:14px;width:60%;margin-bottom:12px"></div>
+            <div class="skeleton" style="height:32px;width:100%"></div>
+          </div>
+        </div>
+      `).join('');
+
+      const countEl = document.getElementById('search-results-count');
+      if (countEl) countEl.textContent = 'Loading products...';
+    }
+  }
+
+  function showLoadError() {
+    const grid = document.getElementById('products-grid');
+    const empty = document.getElementById('products-empty');
+    if (grid) grid.innerHTML = '';
+    if (empty) {
+      empty.hidden = false;
+      empty.querySelector('p').textContent = 'Unable to load products. Check Firebase configuration.';
+    }
   }
 
   function renderCategories() {
@@ -101,21 +141,24 @@ const App = (() => {
   }
 
   function createProductCard(product) {
-    const discount = product.originalPrice
+    const discount = product.discount || (product.originalPrice
       ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-      : 0;
+      : 0);
 
     const stars = renderStars(product.rating);
-    const whatsappMessage = `Hi! I'm interested in:\n\n*${product.name}*\nBrand: ${product.brand}\nPrice: ₹${formatPrice(product.price)}`;
+    const image = ProductUtils.getPrimaryImage(product);
+    const whatsappMessage = `Hi! I'm interested in:\n\n*${product.name}*\nBrand: ${product.brand}\nPrice: ₹${ProductUtils.formatPrice(product.price)}`;
     const whatsappUrl = FirebaseConfig.getWhatsAppUrl(whatsappMessage);
+    const outOfStock = !product.inStock;
 
     return `
       <article class="product-card" role="listitem" data-id="${product.id}">
         <div class="product-card__image-wrap" data-action="view" data-id="${product.id}">
           ${product.badge ? `<span class="product-card__badge">${product.badge}</span>` : ''}
+          ${outOfStock ? `<span class="product-card__badge product-card__badge--stock">Out of Stock</span>` : ''}
           <img
             class="product-card__image"
-            src="${product.image}"
+            src="${image}"
             alt="${product.name}"
             width="260"
             height="260"
@@ -130,13 +173,13 @@ const App = (() => {
             <span class="rating-count">${product.rating}</span>
           </div>
           <div class="product-card__price">
-            <span class="product-card__price-current">₹${formatPrice(product.price)}</span>
-            ${product.originalPrice ? `<span class="product-card__price-original">₹${formatPrice(product.originalPrice)}</span>` : ''}
+            <span class="product-card__price-current">₹${ProductUtils.formatPrice(product.price)}</span>
+            ${product.originalPrice ? `<span class="product-card__price-original">₹${ProductUtils.formatPrice(product.originalPrice)}</span>` : ''}
             ${discount > 0 ? `<span class="product-card__price-off">${discount}% off</span>` : ''}
           </div>
           <div class="product-card__actions">
-            <button type="button" class="btn btn--accent btn--sm" data-action="add-to-cart" data-id="${product.id}">
-              Add to Cart
+            <button type="button" class="btn btn--accent btn--sm" data-action="add-to-cart" data-id="${product.id}" ${outOfStock ? 'disabled' : ''}>
+              ${outOfStock ? 'Out of Stock' : 'Add to Cart'}
             </button>
             <a href="${whatsappUrl}" class="btn btn--whatsapp btn--sm" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp inquiry for ${product.name}">
               <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
@@ -160,7 +203,7 @@ const App = (() => {
     grid.querySelectorAll('[data-action="add-to-cart"]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const product = productList.find((p) => p.id === btn.dataset.id);
-        if (product) CartModule.addItem(product);
+        if (product?.inStock) CartModule.addItem(product);
       });
     });
   }
@@ -179,10 +222,6 @@ const App = (() => {
     }
 
     return html;
-  }
-
-  function formatPrice(price) {
-    return price.toLocaleString('en-IN');
   }
 
   function initHeroSlider() {
