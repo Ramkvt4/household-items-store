@@ -58,34 +58,30 @@ const ProductUtils = (() => {
   }
 
   /**
-   * Convert legacy seed product to Firestore document shape
+   * Convert seed product to Firestore document shape
    * @param {object} product
    * @returns {object}
    */
   function toFirestoreDoc(product) {
-    let discount = 0;
-    if (product.originalPrice && product.price) {
-      discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
-    }
-
     return {
       name: product.name,
       brand: product.brand,
       category: product.category,
       price: product.price,
-      discount,
+      originalPrice: product.originalPrice || null,
+      image: product.image || '',
       description: product.description || '',
       rating: product.rating || 0,
+      reviews: product.reviewCount || 0,
       stock: product.stock ?? 10,
-      images: product.images?.length ? product.images : [product.image].filter(Boolean),
       featured: product.featured ?? false,
-      reviewCount: product.reviewCount || 0,
-      specs: product.specs || null,
+      deal: false,
+      active: true,
     };
   }
 
   /**
-   * Build payload from admin form values
+   * Build Firestore payload from admin form values
    * @param {object} formData
    * @returns {object}
    */
@@ -95,13 +91,33 @@ const ProductUtils = (() => {
       brand: formData.brand.trim(),
       category: formData.category,
       price: Number(formData.price),
-      discount: Number(formData.discount) || 0,
+      originalPrice: formData.originalPrice ? Number(formData.originalPrice) : null,
+      image: normalizeImagePath(formData.image),
       description: formData.description.trim(),
       rating: Number(formData.rating) || 0,
+      reviews: Number(formData.reviews) || 0,
       stock: Number(formData.stock) || 0,
-      images: formData.images || [],
       featured: Boolean(formData.featured),
+      deal: Boolean(formData.deal),
+      active: formData.active !== false,
     };
+  }
+
+  /**
+   * Normalize image input to assets/images/products/<filename>
+   * @param {string} input
+   * @returns {string}
+   */
+  function normalizeImagePath(input) {
+    const trimmed = (input || '').trim();
+    if (!trimmed) return '';
+
+    if (trimmed.startsWith('assets/images/products/')) {
+      return trimmed;
+    }
+
+    const filename = trimmed.replace(/^.*[\\/]/, '');
+    return `assets/images/products/${filename}`;
   }
 
   function formatPrice(price) {
@@ -116,6 +132,7 @@ const ProductUtils = (() => {
     normalize,
     toFirestoreDoc,
     fromFormData,
+    normalizeImagePath,
     formatPrice,
     getPrimaryImage,
     PLACEHOLDER,

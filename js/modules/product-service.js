@@ -16,7 +16,7 @@ const ProductService = (() => {
   }
 
   /**
-   * Fetch active products from Firestore
+   * Fetch active products for the storefront
    * @returns {Promise<Array>}
    */
   async function getAll() {
@@ -36,6 +36,23 @@ const ProductService = (() => {
       console.error('[ProductService] Failed to fetch products:', error);
       return [];
     }
+  }
+
+  /**
+   * Fetch all products for the admin dashboard (including inactive)
+   * @returns {Promise<Array>}
+   */
+  async function getAllForAdmin() {
+    if (!db) {
+      throw new Error('Firestore not initialized');
+    }
+
+    const snapshot = await getCollection().get();
+
+    return snapshot.docs
+      .map((doc) => ProductUtils.normalize({ id: doc.id, ...doc.data() }))
+      .filter(Boolean)
+      .sort((a, b) => a.name.localeCompare(b.name));
   }
 
   /**
@@ -112,6 +129,7 @@ const ProductService = (() => {
   return {
     init,
     getAll,
+    getAllForAdmin,
     getById,
     create,
     update,

@@ -39,7 +39,6 @@ const FirebaseConfig = {
   whatsappNumber: '918919114283', //test
 
   _db: null,
-  _storage: null,
   _auth: null,
   _initialized: false,
 
@@ -50,12 +49,12 @@ const FirebaseConfig = {
   init() {
     if (!this.isConfigured()) {
       console.warn('[Firebase] Add your project credentials in js/config/firebase-config.js');
-      return { db: null, storage: null, auth: null };
+      return { db: null, auth: null };
     }
 
     if (typeof firebase === 'undefined') {
       console.error('[Firebase] SDK not loaded. Check script tags in index.html');
-      return { db: null, storage: null, auth: null };
+      return { db: null, auth: null };
     }
 
     if (!this._initialized) {
@@ -64,18 +63,16 @@ const FirebaseConfig = {
           firebase.initializeApp(this.config);
         }
         this._db = firebase.firestore();
-        this._storage = firebase.storage();
         this._auth = firebase.auth();
         this._initialized = true;
       } catch (error) {
         console.error('[Firebase] Initialization failed:', error);
-        return { db: null, storage: null, auth: null };
+        return { db: null, auth: null };
       }
     }
 
     return {
       db: this._db,
-      storage: this._storage,
       auth: this._auth,
     };
   },
@@ -103,10 +100,6 @@ const FirebaseConfig = {
 
   get db() {
     return this._db;
-  },
-
-  get storage() {
-    return this._storage;
   },
 
   get auth() {

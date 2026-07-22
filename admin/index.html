@@ -41,7 +41,7 @@
     <aside class="admin-sidebar">
       <div class="admin-sidebar__brand">HomeAppliance<span>Hub</span></div>
       <nav class="admin-sidebar__nav">
-        <a href="#" class="admin-sidebar__link admin-sidebar__link--active" data-view="products">Products</a>
+        <a href="#" class="admin-sidebar__link admin-sidebar__link--active" data-view="products">Product List</a>
         <a href="#" class="admin-sidebar__link" data-view="add">Add Product</a>
       </nav>
       <div class="admin-sidebar__footer">
@@ -61,7 +61,7 @@
       </header>
 
       <main class="admin-content">
-        <!-- Products List View -->
+        <!-- Product List -->
         <section id="view-products">
           <div class="admin-stats">
             <div class="admin-stat">
@@ -87,9 +87,10 @@
                   <th>Product</th>
                   <th>Category</th>
                   <th>Price</th>
-                  <th>Discount</th>
+                  <th>Original Price</th>
                   <th>Stock</th>
                   <th>Rating</th>
+                  <th>Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -102,7 +103,7 @@
           </div>
         </section>
 
-        <!-- Add/Edit Product Form -->
+        <!-- Add / Edit Product -->
         <section id="view-form" hidden>
           <form id="product-form" class="admin-form">
             <input type="hidden" id="product-id">
@@ -124,12 +125,16 @@
                 <input type="number" id="product-price" class="admin-form__input" min="0" step="1" required>
               </div>
               <div class="admin-form__group">
-                <label class="admin-form__label" for="product-discount">Discount (%)</label>
-                <input type="number" id="product-discount" class="admin-form__input" min="0" max="99" step="1" value="0">
+                <label class="admin-form__label" for="product-original-price">Original Price (₹)</label>
+                <input type="number" id="product-original-price" class="admin-form__input" min="0" step="1">
               </div>
               <div class="admin-form__group">
                 <label class="admin-form__label" for="product-rating">Rating (0–5)</label>
                 <input type="number" id="product-rating" class="admin-form__input" min="0" max="5" step="0.1" value="4">
+              </div>
+              <div class="admin-form__group">
+                <label class="admin-form__label" for="product-reviews">Reviews</label>
+                <input type="number" id="product-reviews" class="admin-form__input" min="0" step="1" value="0">
               </div>
               <div class="admin-form__group">
                 <label class="admin-form__label" for="product-stock">Stock *</label>
@@ -140,14 +145,29 @@
                 <textarea id="product-description" class="admin-form__textarea"></textarea>
               </div>
               <div class="admin-form__group admin-form__group--full">
-                <label class="admin-form__label" for="product-images">Product Images</label>
-                <input type="file" id="product-images" class="admin-form__input" accept="image/*" multiple>
-                <p class="admin-form__hint">Upload one or more images. Existing images are kept unless removed.</p>
-                <div class="admin-images" id="existing-images"></div>
+                <label class="admin-form__label" for="product-image">Image File Name</label>
+                <input
+                  type="text"
+                  id="product-image"
+                  class="admin-form__input"
+                  placeholder="tv.jpg or assets/images/products/tv.jpg"
+                >
+                <p class="admin-form__hint">Place image files in <code>assets/images/products/</code>. Enter filename only or full relative path.</p>
+                <div class="admin-images" id="image-preview"></div>
               </div>
               <div class="admin-form__group">
                 <label class="admin-form__label">
                   <input type="checkbox" id="product-featured"> Featured product
+                </label>
+              </div>
+              <div class="admin-form__group">
+                <label class="admin-form__label">
+                  <input type="checkbox" id="product-deal"> Deal product
+                </label>
+              </div>
+              <div class="admin-form__group">
+                <label class="admin-form__label">
+                  <input type="checkbox" id="product-active" checked> Active (visible on storefront)
                 </label>
               </div>
             </div>
@@ -179,7 +199,6 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 
   <script src="../js/config/firebase-config.js"></script>
@@ -187,8 +206,10 @@
   <script src="../js/data/products.js"></script>
   <script src="../js/utils/product-utils.js"></script>
   <script src="../js/modules/product-service.js"></script>
-  <script src="../js/modules/storage-service.js"></script>
   <script src="../js/modules/auth-service.js"></script>
+  <script src="../js/admin/modules/admin-ui.js"></script>
+  <script src="../js/admin/modules/product-list.js"></script>
+  <script src="../js/admin/modules/product-form.js"></script>
   <script src="../js/admin-app.js"></script>
 </body>
 </html>
