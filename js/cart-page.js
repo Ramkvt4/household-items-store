@@ -1,9 +1,16 @@
 /**
- * Cart Page — Dynamic rendering (Module 5.4)
- * Reads cart data from cart-service.js and renders the cart UI.
+ * Cart Page — Dynamic rendering (Module 5.4–5.6)
+ * Reads and updates cart data via cart-service.js.
  */
 
-import { getCart, getCartCount, getCartTotal } from './modules/cart-service.js';
+import {
+  getCart,
+  getCartCount,
+  getCartTotal,
+  updateQuantity,
+  removeFromCart,
+  clearCart,
+} from './modules/cart-service.js';
 
 /**
  * Format a number as Indian Rupee display string.
@@ -34,7 +41,7 @@ function createCartItemHtml(item) {
   const subtotal = (Number(item.price) || 0) * (Number(item.quantity) || 0);
 
   return `
-    <article class="cart-page-item">
+    <article class="cart-page-item" data-product-id="${escapeHtml(item.productId)}">
       <a href="index.html#products" class="cart-page-item__image-link">
         <img
           class="cart-page-item__image"
@@ -52,12 +59,29 @@ function createCartItemHtml(item) {
 
         <div class="cart-page-item__controls">
           <div class="quantity-control" aria-label="Quantity">
-            <button type="button" class="quantity-control__btn" aria-label="Decrease quantity">−</button>
+            <button
+              type="button"
+              class="quantity-control__btn"
+              data-action="decrease"
+              data-product-id="${escapeHtml(item.productId)}"
+              aria-label="Decrease quantity"
+            >−</button>
             <span class="quantity-control__value">${item.quantity}</span>
-            <button type="button" class="quantity-control__btn" aria-label="Increase quantity">+</button>
+            <button
+              type="button"
+              class="quantity-control__btn"
+              data-action="increase"
+              data-product-id="${escapeHtml(item.productId)}"
+              aria-label="Increase quantity"
+            >+</button>
           </div>
 
-          <button type="button" class="cart-page-item__remove">Remove</button>
+          <button
+            type="button"
+            class="cart-page-item__remove"
+            data-action="remove"
+            data-product-id="${escapeHtml(item.productId)}"
+          >Remove</button>
         </div>
       </div>
 
@@ -144,4 +168,100 @@ function renderCartPage() {
   renderFilledCart(cart);
 }
 
-document.addEventListener('DOMContentLoaded', renderCartPage);
+/**
+ * Increase quantity for a cart item by one.
+ * @param {string} productId
+ */
+function handleIncrease(productId) {
+  const item = getCart().find((entry) => entry.productId === productId);
+  if (!item) return;
+
+  updateQuantity(productId, item.quantity + 1);
+  renderCartPage();
+}
+
+/**
+ * Decrease quantity for a cart item by one (minimum 1).
+ * @param {string} productId
+ */
+function handleDecrease(productId) {
+  const item = getCart().find((entry) => entry.productId === productId);
+  if (!item || item.quantity <= 1) return;
+
+  updateQuantity(productId, item.quantity - 1);
+  renderCartPage();
+}
+
+/**
+ * Remove a product from the cart entirely.
+ * @param {string} productId
+ */
+function handleRemove(productId) {
+  removeFromCart(productId);
+  renderCartPage();
+}
+
+/**
+ * Handle Proceed to Checkout — demo order placement.
+ */
+function handleCheckout() {
+  const cart = getCart();
+
+  if (cart.length === 0) {
+    alert('Your cart is empty.');
+    return;
+  }
+
+  alert('Order placed successfully! (Demo)');
+  clearCart();
+  renderCartPage();
+}
+
+/**
+ * Bind click handler for the checkout button.
+ */
+function bindCheckoutEvent() {
+  const checkoutBtn = document.querySelector('.cart-summary__checkout');
+  if (!checkoutBtn || checkoutBtn.dataset.eventsBound === 'true') return;
+
+  checkoutBtn.dataset.eventsBound = 'true';
+  checkoutBtn.addEventListener('click', handleCheckout);
+}
+
+/**
+ * Bind click handlers for quantity and remove actions via event delegation.
+ */
+function bindCartItemEvents() {
+  const itemsList = document.getElementById('cart-items-list');
+  if (!itemsList || itemsList.dataset.eventsBound === 'true') return;
+
+  itemsList.dataset.eventsBound = 'true';
+
+  itemsList.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-action]');
+    if (!button) return;
+
+    const { action, productId } = button.dataset;
+    if (!productId) return;
+
+    switch (action) {
+      case 'increase':
+        handleIncrease(productId);
+        break;
+      case 'decrease':
+        handleDecrease(productId);
+        break;
+      case 'remove':
+        handleRemove(productId);
+        break;
+      default:
+        break;
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  bindCartItemEvents();
+  bindCheckoutEvent();
+  renderCartPage();
+});
