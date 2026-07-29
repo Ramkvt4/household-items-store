@@ -117,8 +117,13 @@ const ModalModule = (() => {
       });
     });
 
-    contentEl.querySelector('[data-action="add-to-cart"]')?.addEventListener('click', () => {
-      if (product.inStock) CartModule.addItem(product);
+    contentEl.querySelector('[data-action="add-to-cart"]')?.addEventListener('click', async () => {
+      if (!product.inStock) return;
+
+      const cart = window.CartIntegration
+        ?? await import('./cart-integration.js');
+
+      cart.handleAddToCart(product);
     });
 
     modal.hidden = false;

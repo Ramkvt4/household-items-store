@@ -7,6 +7,15 @@ const App = (() => {
   let categories = [];
   let heroInterval = null;
   let currentSlide = 0;
+  let CartIntegration = null;
+
+  async function loadCartIntegration() {
+    if (!CartIntegration) {
+      CartIntegration = await import('./modules/cart-integration.js');
+      window.CartIntegration = CartIntegration;
+    }
+    return CartIntegration;
+  }
 
   async function init() {
     try {
@@ -26,6 +35,10 @@ const App = (() => {
 
     ModalModule.init();
     CartModule.init();
+
+    const cart = await loadCartIntegration();
+    cart.initCartBadge();
+
     initHeroSlider();
     initMobileMenu();
     initFooterYear();
@@ -201,9 +214,12 @@ const App = (() => {
     });
 
     grid.querySelectorAll('[data-action="add-to-cart"]').forEach((btn) => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', async () => {
         const product = productList.find((p) => p.id === btn.dataset.id);
-        if (product?.inStock) CartModule.addItem(product);
+        if (!product?.inStock) return;
+
+        const cart = await loadCartIntegration();
+        cart.handleAddToCart(product);
       });
     });
   }
