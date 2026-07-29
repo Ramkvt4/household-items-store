@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>Register — HomeAppliance Hub</title>
+  <meta name="description" content="Create your HomeAppliance Hub account.">
+  <meta name="robots" content="noindex, follow">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Site header (shared layout — keep in sync with index.html) -->
+  <header class="header" role="banner">
+    <div class="header__top">
+      <div class="container header__top-inner">
+        <a href="index.html" class="logo" aria-label="HomeAppliance Hub Home">
+          <svg class="logo__icon" viewBox="0 0 32 32" aria-hidden="true">
+            <rect x="4" y="8" width="24" height="20" rx="2" fill="currentColor" opacity="0.15"/>
+            <path d="M8 12h16M8 16h12M8 20h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span class="logo__text">HomeAppliance<span class="logo__accent">Hub</span></span>
+        </a>
+
+        <div class="search-bar" role="search">
+          <label for="search-input" class="visually-hidden">Search products</label>
+          <input
+            type="search"
+            id="search-input"
+            class="search-bar__input"
+            placeholder="Search for appliances, brands and more..."
+            autocomplete="off"
+          >
+          <button type="button" class="search-bar__btn" aria-label="Search">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M16 16l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <nav class="header__actions" aria-label="Quick actions">
+          <a href="login.html" class="header__action">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+              <path d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-4 0-8 2-8 5v1h16v-1c0-3-4-5-8-5z" fill="currentColor"/>
+            </svg>
+            <span class="header__action-label">Login</span>
+          </a>
+
+          <a href="cart.html" class="header__action">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+              <path d="M6 6h15l-1.5 9H7.5L6 6zM6 6L5 3H2" fill="none" stroke="currentColor" stroke-width="2"/>
+              <circle cx="9" cy="20" r="1.5" fill="currentColor"/>
+              <circle cx="18" cy="20" r="1.5" fill="currentColor"/>
+            </svg>
+            <span class="header__action-label">Cart</span>
+            <span class="cart-badge" hidden>0</span>
+          </a>
+
+          <button type="button" class="header__action mobile-menu-btn" aria-label="Open menu">
+            <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+              <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </nav>
+      </div>
+    </div>
+
+    <nav class="header__nav" id="main-nav" aria-label="Main navigation">
+      <div class="container">
+        <ul class="nav-list">
+          <li><a href="index.html#hero" class="nav-link">Home</a></li>
+          <li><a href="index.html#categories" class="nav-link">Categories</a></li>
+          <li><a href="index.html#products" class="nav-link">All Products</a></li>
+          <li><a href="index.html#deals" class="nav-link">Deals</a></li>
+          <li><a href="index.html#footer" class="nav-link">Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main-content" class="auth-page">
+    <div class="container">
+      <header class="auth-page__header">
+        <h1 class="auth-page__title">Create Account</h1>
+        <p class="auth-page__subtitle">Join HomeAppliance Hub and start shopping</p>
+      </header>
+
+      <div class="auth-card">
+        <form class="auth-form" action="#" method="post" novalidate>
+          <div class="auth-form__group">
+            <label class="auth-form__label" for="register-name">Full Name</label>
+            <input
+              type="text"
+              id="register-name"
+              name="name"
+              class="auth-form__input"
+              placeholder="Enter your full name"
+              autocomplete="name"
+            >
+          </div>
+
+          <div class="auth-form__group">
+            <label class="auth-form__label" for="register-email">Email</label>
+            <input
+              type="email"
+              id="register-email"
+              name="email"
+              class="auth-form__input"
+              placeholder="Enter your email"
+              autocomplete="email"
+            >
+          </div>
+
+          <div class="auth-form__group">
+            <label class="auth-form__label" for="register-password">Password</label>
+            <input
+              type="password"
+              id="register-password"
+              name="password"
+              class="auth-form__input"
+              placeholder="Create a password"
+              autocomplete="new-password"
+            >
+          </div>
+
+          <div class="auth-form__group">
+            <label class="auth-form__label" for="register-confirm-password">Confirm Password</label>
+            <input
+              type="password"
+              id="register-confirm-password"
+              name="confirmPassword"
+              class="auth-form__input"
+              placeholder="Confirm your password"
+              autocomplete="new-password"
+            >
+          </div>
+
+          <div class="auth-form__actions">
+            <button type="button" class="btn btn--accent btn--block">Register</button>
+          </div>
+
+          <p class="auth-form__footer">
+            Already have an account?
+            <a href="login.html">Login</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- Site footer (shared layout — keep in sync with index.html) -->
+  <footer class="footer" id="footer" role="contentinfo">
+    <div class="container footer__grid">
+      <div class="footer__brand">
+        <a href="index.html" class="logo logo--footer">
+          <span class="logo__text">HomeAppliance<span class="logo__accent">Hub</span></span>
+        </a>
+        <p>Your trusted destination for premium household appliances. Quality products, competitive prices, and exceptional service.</p>
+      </div>
+      <nav aria-label="Footer navigation">
+        <h3 class="footer__heading">Quick Links</h3>
+        <ul class="footer__links">
+          <li><a href="index.html#products">All Products</a></li>
+          <li><a href="index.html#categories">Categories</a></li>
+          <li><a href="index.html#deals">Deals</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h3 class="footer__heading">Contact Us</h3>
+        <ul class="footer__links">
+          <li><a href="tel:+919876543210">+91 98765 43210</a></li>
+          <li><a href="mailto:info@homeappliancehub.com">info@homeappliancehub.com</a></li>
+          <li><a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer">WhatsApp Us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__heading">Store Info</h3>
+        <address class="footer__address">
+          123 Commerce Street<br>
+          Mumbai, Maharashtra 400001<br>
+          India
+        </address>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <div class="container footer__bottom-inner">
+        <p>&copy; 2026 HomeAppliance Hub. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="js/auth.js"></script>
+</body>
+</html>
