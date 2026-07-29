@@ -64,7 +64,7 @@
               <circle cx="18" cy="20" r="1.5" fill="currentColor"/>
             </svg>
             <span class="header__action-label">Cart</span>
-            <span class="cart-badge">1</span>
+            <span class="cart-badge" hidden>0</span>
           </a>
 
           <button type="button" class="header__action mobile-menu-btn" aria-label="Open menu">
@@ -99,57 +99,34 @@
       </nav>
 
       <h1 class="cart-page__title">Shopping Cart</h1>
-      <p class="cart-page__subtitle">1 item in your cart</p>
+      <p class="cart-page__subtitle" id="cart-page-subtitle"></p>
 
-      <div class="cart-page__layout">
+      <!-- Empty cart -->
+      <section class="cart-empty" id="cart-empty" hidden aria-labelledby="cart-empty-heading">
+        <div class="cart-empty__icon" aria-hidden="true">🛒</div>
+        <h2 class="cart-empty__title" id="cart-empty-heading">Your Shopping Cart is Empty</h2>
+        <p class="cart-empty__text">Your cart doesn't have any products yet.</p>
+        <a href="index.html" class="btn btn--primary">Continue Shopping</a>
+      </section>
+
+      <div class="cart-page__layout" id="cart-layout" hidden>
         <!-- Cart Items -->
         <section class="cart-page__items" aria-labelledby="cart-items-heading">
           <h2 id="cart-items-heading" class="cart-page__section-title">Cart Items</h2>
 
-          <article class="cart-page-item">
-            <a href="index.html#products" class="cart-page-item__image-link">
-              <img
-                class="cart-page-item__image"
-                src="assets/images/products/television.svg"
-                alt="Sony Bravia 3222"
-                width="120"
-                height="120"
-              >
-            </a>
-
-            <div class="cart-page-item__details">
-              <p class="cart-page-item__brand">Sony</p>
-              <h3 class="cart-page-item__name">Sony Bravia 3222</h3>
-              <p class="cart-page-item__price">₹40,000</p>
-
-              <div class="cart-page-item__controls">
-                <div class="quantity-control" aria-label="Quantity">
-                  <button type="button" class="quantity-control__btn" aria-label="Decrease quantity">−</button>
-                  <span class="quantity-control__value">1</span>
-                  <button type="button" class="quantity-control__btn" aria-label="Increase quantity">+</button>
-                </div>
-
-                <button type="button" class="cart-page-item__remove">Remove</button>
-              </div>
-            </div>
-
-            <div class="cart-page-item__subtotal">
-              <span class="cart-page-item__subtotal-label">Subtotal</span>
-              <strong class="cart-page-item__subtotal-value">₹40,000</strong>
-            </div>
-          </article>
+          <div id="cart-items-list"></div>
 
           <a href="index.html" class="btn btn--secondary cart-page__continue">Continue Shopping</a>
         </section>
 
         <!-- Order Summary -->
-        <aside class="cart-summary" aria-labelledby="cart-summary-heading">
+        <aside class="cart-summary" id="cart-summary" aria-labelledby="cart-summary-heading">
           <h2 id="cart-summary-heading" class="cart-summary__title">Order Summary</h2>
 
           <dl class="cart-summary__rows">
             <div class="cart-summary__row">
               <dt>Items Total</dt>
-              <dd>₹40,000</dd>
+              <dd id="summary-items-total">₹0</dd>
             </div>
             <div class="cart-summary__row">
               <dt>Discount</dt>
@@ -161,7 +138,7 @@
             </div>
             <div class="cart-summary__row cart-summary__row--total">
               <dt>Grand Total</dt>
-              <dd>₹40,000</dd>
+              <dd id="summary-grand-total">₹0</dd>
             </div>
           </dl>
 
@@ -212,5 +189,7 @@
       </div>
     </div>
   </footer>
+
+  <script type="module" src="js/cart-page.js"></script>
 </body>
 </html>
