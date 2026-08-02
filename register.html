@@ -97,7 +97,7 @@
       </header>
 
       <div class="auth-card">
-        <form class="auth-form" action="#" method="post" novalidate>
+        <form class="auth-form" id="register-form" action="#" method="post" novalidate>
           <div class="auth-form__group">
             <label class="auth-form__label" for="register-name">Full Name</label>
             <input
@@ -146,8 +146,24 @@
             >
           </div>
 
+          <p
+            id="register-error"
+            class="auth-form__message"
+            role="alert"
+            hidden
+            style="padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: var(--font-size-sm); background: #fdecea; color: var(--color-danger); border: 1px solid #f5c6cb; margin: 0;"
+          ></p>
+
+          <p
+            id="register-success"
+            class="auth-form__message"
+            role="status"
+            hidden
+            style="padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: var(--font-size-sm); background: #e8f8ef; color: var(--color-success-dark); border: 1px solid #b8e6c8; margin: 0;"
+          ></p>
+
           <div class="auth-form__actions">
-            <button type="button" class="btn btn--accent btn--block">Register</button>
+            <button type="submit" id="register-submit-btn" class="btn btn--accent btn--block">Register</button>
           </div>
 
           <p class="auth-form__footer">
