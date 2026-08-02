@@ -50,12 +50,25 @@
         </div>
 
         <nav class="header__actions" aria-label="Quick actions">
-          <a href="#" class="header__action">
-            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-              <path d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-4 0-8 2-8 5v1h16v-1c0-3-4-5-8-5z" fill="currentColor"/>
-            </svg>
-            <span class="header__action-label">Login</span>
+
+          <!-- Auth action (Login / My Account) -->
+          <div id="auth-action">
+          <a href="login.html" class="header__action" id="login-btn" aria-label="Login">
+      
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                  <path
+                      d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-4 0-8 2-8 5v1h16v-1c0-3-4-5-8-5z"
+                      fill="currentColor"/>
+              </svg>
+      
+              <span class="header__action-label">
+                  Login
+              </span>
+      
           </a>
+          </div>
+      
+          <!-- Cart -->
 
           <a href="cart.html" class="header__action" aria-current="page">
             <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
@@ -191,5 +204,6 @@
   </footer>
 
   <script type="module" src="js/cart-page.js"></script>
+  <script type="module" src="js/modules/auth-ui.js"></script>
 </body>
 </html>
