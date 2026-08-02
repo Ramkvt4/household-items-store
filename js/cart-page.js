@@ -1,5 +1,5 @@
 /**
- * Cart Page — Dynamic rendering (Module 5.4–5.6, Module 7 Phase 2)
+ * Cart Page — Dynamic rendering (Module 5.4–5.6, Module 7 Phase 2–4)
  * Reads and updates cart data via cart-service.js (localStorage or Firestore).
  */
 
@@ -11,8 +11,13 @@ import {
   removeFromCart,
   clearCart,
   initCartService,
+  isCartLoading,
   CART_UPDATED_EVENT,
+  CART_LOADING_EVENT,
 } from './modules/cart-service.js';
+
+/** @type {HTMLElement | null} */
+let loadingElement = null;
 
 /**
  * Format a number as Indian Rupee display string.
@@ -32,6 +37,69 @@ function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str ?? '';
   return div.innerHTML;
+}
+
+/**
+ * Ensure the loading indicator element exists in the DOM.
+ * @returns {HTMLElement}
+ */
+function ensureLoadingElement() {
+  if (loadingElement) {
+    return loadingElement;
+  }
+
+  loadingElement = document.createElement('section');
+  loadingElement.id = 'cart-loading';
+  loadingElement.className = 'cart-loading';
+  loadingElement.setAttribute('aria-live', 'polite');
+  loadingElement.setAttribute('aria-busy', 'true');
+  loadingElement.innerHTML = `
+    <div class="cart-loading__inner">
+      <p class="cart-loading__text">Loading your cart…</p>
+    </div>
+  `;
+
+  loadingElement.style.cssText = [
+    'display:flex',
+    'justify-content:center',
+    'align-items:center',
+    'min-height:12rem',
+    'color:var(--color-text-muted, #64748b)',
+  ].join(';');
+
+  const inner = loadingElement.querySelector('.cart-loading__inner');
+  if (inner) {
+    inner.style.cssText = 'text-align:center;padding:2rem 1rem;';
+  }
+
+  const subtitle = document.getElementById('cart-page-subtitle');
+  if (subtitle?.parentNode) {
+    subtitle.insertAdjacentElement('afterend', loadingElement);
+  } else {
+    document.querySelector('.cart-page .container')?.appendChild(loadingElement);
+  }
+
+  return loadingElement;
+}
+
+/**
+ * Show or hide the cart loading state.
+ * @param {boolean} loading
+ */
+function setPageLoading(loading) {
+  const layout = document.getElementById('cart-layout');
+  const emptyState = document.getElementById('cart-empty');
+  const subtitle = document.getElementById('cart-page-subtitle');
+  const loader = ensureLoadingElement();
+
+  loader.hidden = !loading;
+  loader.setAttribute('aria-busy', loading ? 'true' : 'false');
+
+  if (loading) {
+    layout.hidden = true;
+    emptyState.hidden = true;
+    subtitle.hidden = true;
+  }
 }
 
 /**
@@ -160,6 +228,13 @@ function renderEmptyCart() {
  * Read cart and render the page.
  */
 function renderCartPage() {
+  if (isCartLoading()) {
+    setPageLoading(true);
+    return;
+  }
+
+  setPageLoading(false);
+
   const cart = getCart();
 
   if (cart.length === 0) {
@@ -179,7 +254,6 @@ async function handleIncrease(productId) {
   if (!item) return;
 
   await updateQuantity(productId, item.quantity + 1);
-  renderCartPage();
 }
 
 /**
@@ -191,7 +265,6 @@ async function handleDecrease(productId) {
   if (!item || item.quantity <= 1) return;
 
   await updateQuantity(productId, item.quantity - 1);
-  renderCartPage();
 }
 
 /**
@@ -200,7 +273,6 @@ async function handleDecrease(productId) {
  */
 async function handleRemove(productId) {
   await removeFromCart(productId);
-  renderCartPage();
 }
 
 /**
@@ -216,7 +288,6 @@ async function handleCheckout() {
 
   alert('Order placed successfully! (Demo)');
   await clearCart();
-  renderCartPage();
 }
 
 /**
@@ -266,8 +337,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   bindCartItemEvents();
   bindCheckoutEvent();
 
+  setPageLoading(true);
+
   await initCartService();
   renderCartPage();
 
   document.addEventListener(CART_UPDATED_EVENT, renderCartPage);
+  document.addEventListener(CART_LOADING_EVENT, renderCartPage);
 });

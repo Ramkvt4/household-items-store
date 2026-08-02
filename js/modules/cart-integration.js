@@ -8,6 +8,7 @@ import {
   getCartCount,
   initCartService,
   CART_UPDATED_EVENT,
+  CART_LOADING_EVENT,
 } from './cart-service.js';
 
 /**
@@ -68,9 +69,15 @@ export async function handleAddToCart(product) {
 
 /**
  * Initialize cart badge on page load.
+ * Listens for cart updates and loading completion (Firestore sync).
  */
 export async function initCartBadge() {
   await initCartService();
   updateCartBadge();
   document.addEventListener(CART_UPDATED_EVENT, updateCartBadge);
+  document.addEventListener(CART_LOADING_EVENT, ({ detail }) => {
+    if (detail?.loading === false) {
+      updateCartBadge();
+    }
+  });
 }
