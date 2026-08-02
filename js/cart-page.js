@@ -1,5 +1,5 @@
 /**
- * Cart Page — Dynamic rendering (Module 5.4–5.6, Module 7 Phase 2–4)
+ * Cart Page — Dynamic rendering (Module 5.4–5.6, Module 7 Phase 2–5)
  * Reads and updates cart data via cart-service.js (localStorage or Firestore).
  */
 
@@ -15,6 +15,12 @@ import {
   CART_UPDATED_EVENT,
   CART_LOADING_EVENT,
 } from './modules/cart-service.js';
+import {
+  showCartToast,
+  getFriendlyCartErrorMessage,
+  withCartControl,
+  initCartUi,
+} from './modules/cart-ui.js';
 
 /** @type {HTMLElement | null} */
 let loadingElement = null;
@@ -96,9 +102,9 @@ function setPageLoading(loading) {
   loader.setAttribute('aria-busy', loading ? 'true' : 'false');
 
   if (loading) {
-    layout.hidden = true;
-    emptyState.hidden = true;
-    subtitle.hidden = true;
+    if (layout) layout.hidden = true;
+    if (emptyState) emptyState.hidden = true;
+    if (subtitle) subtitle.hidden = true;
   }
 }
 
@@ -195,16 +201,32 @@ function renderFilledCart(cart) {
   const emptyState = document.getElementById('cart-empty');
   const itemsList = document.getElementById('cart-items-list');
   const subtitle = document.getElementById('cart-page-subtitle');
+  const loader = loadingElement ?? document.getElementById('cart-loading');
 
   const count = getCartCount();
   const total = getCartTotal();
 
-  emptyState.hidden = true;
-  layout.hidden = false;
-  subtitle.hidden = false;
+  if (loader) loader.hidden = true;
+  if (emptyState) {
+    emptyState.hidden = true;
+    emptyState.setAttribute('hidden', '');
+  }
 
-  subtitle.textContent = `${count} item${count !== 1 ? 's' : ''} in your cart`;
-  itemsList.innerHTML = cart.map(createCartItemHtml).join('');
+  if (layout) {
+    layout.hidden = false;
+    layout.removeAttribute('hidden');
+  }
+
+  if (subtitle) {
+    subtitle.hidden = false;
+    subtitle.removeAttribute('hidden');
+    subtitle.textContent = `${count} item${count !== 1 ? 's' : ''} in your cart`;
+  }
+
+  if (itemsList) {
+    itemsList.innerHTML = cart.map(createCartItemHtml).join('');
+  }
+
   renderOrderSummary(total);
   updateHeaderBadge(count);
 }
@@ -215,12 +237,29 @@ function renderFilledCart(cart) {
 function renderEmptyCart() {
   const layout = document.getElementById('cart-layout');
   const emptyState = document.getElementById('cart-empty');
+  const itemsList = document.getElementById('cart-items-list');
   const subtitle = document.getElementById('cart-page-subtitle');
+  const loader = loadingElement ?? document.getElementById('cart-loading');
 
-  layout.hidden = true;
-  emptyState.hidden = false;
-  subtitle.hidden = true;
+  if (loader) loader.hidden = true;
+  if (itemsList) itemsList.innerHTML = '';
+  if (subtitle) {
+    subtitle.hidden = true;
+    subtitle.setAttribute('hidden', '');
+    subtitle.textContent = '';
+  }
 
+  if (layout) {
+    layout.hidden = true;
+    layout.setAttribute('hidden', '');
+  }
+
+  if (emptyState) {
+    emptyState.hidden = false;
+    emptyState.removeAttribute('hidden');
+  }
+
+  renderOrderSummary(0);
   updateHeaderBadge(0);
 }
 
@@ -254,6 +293,7 @@ async function handleIncrease(productId) {
   if (!item) return;
 
   await updateQuantity(productId, item.quantity + 1);
+  showCartToast('Quantity Updated', 'success');
 }
 
 /**
@@ -265,6 +305,7 @@ async function handleDecrease(productId) {
   if (!item || item.quantity <= 1) return;
 
   await updateQuantity(productId, item.quantity - 1);
+  showCartToast('Quantity Updated', 'success');
 }
 
 /**
@@ -273,21 +314,26 @@ async function handleDecrease(productId) {
  */
 async function handleRemove(productId) {
   await removeFromCart(productId);
+  showCartToast('Item Removed', 'success');
 }
 
 /**
  * Handle Proceed to Checkout — demo order placement.
+ * @param {HTMLButtonElement} button
  */
-async function handleCheckout() {
+async function handleCheckout(button) {
   const cart = getCart();
 
   if (cart.length === 0) {
-    alert('Your cart is empty.');
+    showCartToast('Your cart is empty.', 'info');
     return;
   }
 
-  alert('Order placed successfully! (Demo)');
-  await clearCart();
+  await withCartControl(button, async () => {
+    showCartToast('Order placed successfully! (Demo)', 'success');
+    await clearCart();
+    showCartToast('Cart Cleared', 'success');
+  });
 }
 
 /**
@@ -298,7 +344,37 @@ function bindCheckoutEvent() {
   if (!checkoutBtn || checkoutBtn.dataset.eventsBound === 'true') return;
 
   checkoutBtn.dataset.eventsBound = 'true';
-  checkoutBtn.addEventListener('click', handleCheckout);
+  checkoutBtn.addEventListener('click', () => {
+    handleCheckout(checkoutBtn);
+  });
+}
+
+/**
+ * Run a cart item action with per-control locking and error handling.
+ * @param {HTMLButtonElement} button
+ * @param {string} action
+ * @param {string} productId
+ */
+async function runCartItemAction(button, action, productId) {
+  try {
+    await withCartControl(button, async () => {
+      switch (action) {
+        case 'increase':
+          await handleIncrease(productId);
+          break;
+        case 'decrease':
+          await handleDecrease(productId);
+          break;
+        case 'remove':
+          await handleRemove(productId);
+          break;
+        default:
+          break;
+      }
+    });
+  } catch (error) {
+    showCartToast(getFriendlyCartErrorMessage(error), 'error');
+  }
 }
 
 /**
@@ -312,28 +388,17 @@ function bindCartItemEvents() {
 
   itemsList.addEventListener('click', (event) => {
     const button = event.target.closest('[data-action]');
-    if (!button) return;
+    if (!button || button.disabled) return;
 
     const { action, productId } = button.dataset;
     if (!productId) return;
 
-    switch (action) {
-      case 'increase':
-        handleIncrease(productId);
-        break;
-      case 'decrease':
-        handleDecrease(productId);
-        break;
-      case 'remove':
-        handleRemove(productId);
-        break;
-      default:
-        break;
-    }
+    runCartItemAction(button, action, productId);
   });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+  initCartUi();
   bindCartItemEvents();
   bindCheckoutEvent();
 

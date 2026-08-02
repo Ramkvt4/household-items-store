@@ -10,6 +10,15 @@ import {
   CART_UPDATED_EVENT,
   CART_LOADING_EVENT,
 } from './cart-service.js';
+import {
+  showCartToast,
+  getFriendlyCartErrorMessage,
+  findAddToCartButtons,
+  setControlsDisabled,
+} from './cart-ui.js';
+
+/** @type {Set<string>} */
+const pendingAddOperations = new Set();
 
 /**
  * Map a storefront product to the cart-service product shape.
@@ -57,14 +66,38 @@ export function animateCartBadge() {
 
 /**
  * Add a product to the cart and refresh the navbar badge.
+ * Disables matching Add to Cart buttons until the operation completes.
  * @param {object} product
+ * @param {HTMLElement} [triggerButton]
  */
-export async function handleAddToCart(product) {
+export async function handleAddToCart(product, triggerButton = null) {
   if (!product || product.inStock === false) return;
 
-  await addToCart(toCartProduct(product));
-  updateCartBadge();
-  animateCartBadge();
+  const productId = product.id;
+  const operationKey = `add-${productId}`;
+
+  if (pendingAddOperations.has(operationKey)) return;
+
+  const buttons = triggerButton
+    ? [triggerButton]
+    : findAddToCartButtons(productId);
+
+  if (buttons.some((button) => button.disabled)) return;
+
+  pendingAddOperations.add(operationKey);
+  setControlsDisabled(buttons, true);
+
+  try {
+    await addToCart(toCartProduct(product));
+    updateCartBadge();
+    animateCartBadge();
+    showCartToast('Added to Cart', 'success');
+  } catch (error) {
+    showCartToast(getFriendlyCartErrorMessage(error), 'error');
+  } finally {
+    pendingAddOperations.delete(operationKey);
+    setControlsDisabled(buttons, false);
+  }
 }
 
 /**
