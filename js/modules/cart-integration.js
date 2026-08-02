@@ -3,7 +3,12 @@
  * Connects cart-service.js to homepage UI (badge updates only).
  */
 
-import { addToCart, getCartCount } from './cart-service.js';
+import {
+  addToCart,
+  getCartCount,
+  initCartService,
+  CART_UPDATED_EVENT,
+} from './cart-service.js';
 
 /**
  * Map a storefront product to the cart-service product shape.
@@ -53,10 +58,10 @@ export function animateCartBadge() {
  * Add a product to the cart and refresh the navbar badge.
  * @param {object} product
  */
-export function handleAddToCart(product) {
+export async function handleAddToCart(product) {
   if (!product || product.inStock === false) return;
 
-  addToCart(toCartProduct(product));
+  await addToCart(toCartProduct(product));
   updateCartBadge();
   animateCartBadge();
 }
@@ -64,6 +69,8 @@ export function handleAddToCart(product) {
 /**
  * Initialize cart badge on page load.
  */
-export function initCartBadge() {
+export async function initCartBadge() {
+  await initCartService();
   updateCartBadge();
+  document.addEventListener(CART_UPDATED_EVENT, updateCartBadge);
 }

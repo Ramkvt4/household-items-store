@@ -1,6 +1,6 @@
 /**
- * Cart Page — Dynamic rendering (Module 5.4–5.6)
- * Reads and updates cart data via cart-service.js.
+ * Cart Page — Dynamic rendering (Module 5.4–5.6, Module 7 Phase 2)
+ * Reads and updates cart data via cart-service.js (localStorage or Firestore).
  */
 
 import {
@@ -10,6 +10,8 @@ import {
   updateQuantity,
   removeFromCart,
   clearCart,
+  initCartService,
+  CART_UPDATED_EVENT,
 } from './modules/cart-service.js';
 
 /**
@@ -155,7 +157,7 @@ function renderEmptyCart() {
 }
 
 /**
- * Read cart from localStorage and render the page.
+ * Read cart and render the page.
  */
 function renderCartPage() {
   const cart = getCart();
@@ -172,11 +174,11 @@ function renderCartPage() {
  * Increase quantity for a cart item by one.
  * @param {string} productId
  */
-function handleIncrease(productId) {
+async function handleIncrease(productId) {
   const item = getCart().find((entry) => entry.productId === productId);
   if (!item) return;
 
-  updateQuantity(productId, item.quantity + 1);
+  await updateQuantity(productId, item.quantity + 1);
   renderCartPage();
 }
 
@@ -184,11 +186,11 @@ function handleIncrease(productId) {
  * Decrease quantity for a cart item by one (minimum 1).
  * @param {string} productId
  */
-function handleDecrease(productId) {
+async function handleDecrease(productId) {
   const item = getCart().find((entry) => entry.productId === productId);
   if (!item || item.quantity <= 1) return;
 
-  updateQuantity(productId, item.quantity - 1);
+  await updateQuantity(productId, item.quantity - 1);
   renderCartPage();
 }
 
@@ -196,15 +198,15 @@ function handleDecrease(productId) {
  * Remove a product from the cart entirely.
  * @param {string} productId
  */
-function handleRemove(productId) {
-  removeFromCart(productId);
+async function handleRemove(productId) {
+  await removeFromCart(productId);
   renderCartPage();
 }
 
 /**
  * Handle Proceed to Checkout — demo order placement.
  */
-function handleCheckout() {
+async function handleCheckout() {
   const cart = getCart();
 
   if (cart.length === 0) {
@@ -213,7 +215,7 @@ function handleCheckout() {
   }
 
   alert('Order placed successfully! (Demo)');
-  clearCart();
+  await clearCart();
   renderCartPage();
 }
 
@@ -260,8 +262,12 @@ function bindCartItemEvents() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   bindCartItemEvents();
   bindCheckoutEvent();
+
+  await initCartService();
   renderCartPage();
+
+  document.addEventListener(CART_UPDATED_EVENT, renderCartPage);
 });
