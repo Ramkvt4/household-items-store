@@ -30,6 +30,7 @@ const FirebaseConfig = {
     orders: 'orders',
     inquiries: 'inquiries',
     admins: 'admins',
+    carts: 'carts',
   },
 
   storagePaths: {

@@ -19,6 +19,16 @@ export const firebaseAppConfig = {
  */
 export const AUTH_SIGN_IN_METHOD = 'emailPassword';
 
+/** Firestore collection names — keep in sync with js/config/firebase-config.js */
+export const firebaseCollections = {
+  products: 'products',
+  categories: 'categories',
+  orders: 'orders',
+  inquiries: 'inquiries',
+  admins: 'admins',
+  carts: 'carts',
+};
+
 /**
  * @returns {boolean}
  */
