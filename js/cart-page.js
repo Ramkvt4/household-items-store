@@ -9,7 +9,6 @@ import {
   getCartTotal,
   updateQuantity,
   removeFromCart,
-  clearCart,
   initCartService,
   isCartLoading,
   CART_UPDATED_EVENT,
@@ -318,10 +317,9 @@ async function handleRemove(productId) {
 }
 
 /**
- * Handle Proceed to Checkout — demo order placement.
- * @param {HTMLButtonElement} button
+ * Handle Proceed to Checkout — navigate to checkout page.
  */
-async function handleCheckout(button) {
+function handleCheckout() {
   const cart = getCart();
 
   if (cart.length === 0) {
@@ -329,11 +327,7 @@ async function handleCheckout(button) {
     return;
   }
 
-  await withCartControl(button, async () => {
-    showCartToast('Order placed successfully! (Demo)', 'success');
-    await clearCart();
-    showCartToast('Cart Cleared', 'success');
-  });
+  window.location.href = 'checkout.html';
 }
 
 /**
@@ -344,9 +338,7 @@ function bindCheckoutEvent() {
   if (!checkoutBtn || checkoutBtn.dataset.eventsBound === 'true') return;
 
   checkoutBtn.dataset.eventsBound = 'true';
-  checkoutBtn.addEventListener('click', () => {
-    handleCheckout(checkoutBtn);
-  });
+  checkoutBtn.addEventListener('click', handleCheckout);
 }
 
 /**

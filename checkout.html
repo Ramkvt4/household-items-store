@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>Checkout — HomeAppliance Hub</title>
+  <meta name="description" content="Complete your order at HomeAppliance Hub — enter shipping details and review your order summary.">
+  <meta name="robots" content="noindex, follow">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/cart.css">
+  <link rel="stylesheet" href="css/checkout.css">
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Site header (shared layout — keep in sync with index.html) -->
+  <header class="header" role="banner">
+    <div class="header__top">
+      <div class="container header__top-inner">
+        <a href="index.html" class="logo" aria-label="HomeAppliance Hub Home">
+          <svg class="logo__icon" viewBox="0 0 32 32" aria-hidden="true">
+            <rect x="4" y="8" width="24" height="20" rx="2" fill="currentColor" opacity="0.15"/>
+            <path d="M8 12h16M8 16h12M8 20h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span class="logo__text">HomeAppliance<span class="logo__accent">Hub</span></span>
+        </a>
+
+        <div class="search-bar" role="search">
+          <label for="search-input" class="visually-hidden">Search products</label>
+          <input
+            type="search"
+            id="search-input"
+            class="search-bar__input"
+            placeholder="Search for appliances, brands and more..."
+            autocomplete="off"
+          >
+          <button type="button" class="search-bar__btn" aria-label="Search">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/>
+              <path d="M16 16l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <nav class="header__actions" aria-label="Quick actions">
+          <div id="auth-action">
+            <a href="login.html" class="header__action" id="login-btn" aria-label="Login">
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                <path
+                  d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-4 0-8 2-8 5v1h16v-1c0-3-4-5-8-5z"
+                  fill="currentColor"/>
+              </svg>
+              <span class="header__action-label">Login</span>
+            </a>
+          </div>
+
+          <a href="cart.html" class="header__action">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+              <path d="M6 6h15l-1.5 9H7.5L6 6zM6 6L5 3H2" fill="none" stroke="currentColor" stroke-width="2"/>
+              <circle cx="9" cy="20" r="1.5" fill="currentColor"/>
+              <circle cx="18" cy="20" r="1.5" fill="currentColor"/>
+            </svg>
+            <span class="header__action-label">Cart</span>
+            <span class="cart-badge" hidden>0</span>
+          </a>
+
+          <button type="button" class="header__action mobile-menu-btn" aria-label="Open menu">
+            <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+              <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </nav>
+      </div>
+    </div>
+
+    <nav class="header__nav" id="main-nav" aria-label="Main navigation">
+      <div class="container">
+        <ul class="nav-list">
+          <li><a href="index.html#hero" class="nav-link">Home</a></li>
+          <li><a href="index.html#categories" class="nav-link">Categories</a></li>
+          <li><a href="index.html#products" class="nav-link">All Products</a></li>
+          <li><a href="index.html#deals" class="nav-link">Deals</a></li>
+          <li><a href="index.html#footer" class="nav-link">Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main-content" class="checkout-page">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <ol class="breadcrumb__list">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="cart.html">Shopping Cart</a></li>
+          <li aria-current="page">Checkout</li>
+        </ol>
+      </nav>
+
+      <h1 class="checkout-page__title">Checkout</h1>
+      <p class="checkout-page__subtitle" id="checkout-page-subtitle">Review your details and place your order</p>
+
+      <section class="checkout-loading" id="checkout-loading" aria-live="polite" aria-busy="true">
+        <p>Loading checkout…</p>
+      </section>
+
+      <section class="checkout-empty" id="checkout-empty" hidden aria-labelledby="checkout-empty-heading">
+        <div class="checkout-empty__icon" aria-hidden="true">🛒</div>
+        <h2 class="checkout-empty__title" id="checkout-empty-heading">Your Cart is Empty</h2>
+        <p class="checkout-empty__text">Add products to your cart before proceeding to checkout.</p>
+        <a href="index.html#products" class="btn btn--primary">Continue Shopping</a>
+      </section>
+
+      <div class="checkout-page__layout" id="checkout-layout" hidden>
+        <div class="checkout-page__main">
+          <form id="checkout-form" class="checkout-form" novalidate>
+            <!-- Customer Information -->
+            <section class="checkout-section" aria-labelledby="customer-info-heading">
+              <h2 id="customer-info-heading" class="checkout-section__title">Customer Information</h2>
+
+              <div class="checkout-form__group checkout-form__group--full">
+                <label class="checkout-form__label" for="full-name">
+                  Full Name <span class="checkout-form__required" aria-hidden="true">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="full-name"
+                  name="fullName"
+                  class="checkout-form__input"
+                  autocomplete="name"
+                  required
+                >
+                <span class="checkout-form__error" id="error-fullName" role="alert"></span>
+              </div>
+
+              <div class="checkout-form__row">
+                <div class="checkout-form__group">
+                  <label class="checkout-form__label" for="mobile">
+                    Mobile Number <span class="checkout-form__required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    id="mobile"
+                    name="mobile"
+                    class="checkout-form__input"
+                    inputmode="numeric"
+                    maxlength="10"
+                    autocomplete="tel"
+                    placeholder="10-digit mobile number"
+                    required
+                  >
+                  <span class="checkout-form__error" id="error-mobile" role="alert"></span>
+                </div>
+
+                <div class="checkout-form__group">
+                  <label class="checkout-form__label" for="email">
+                    Email Address <span class="checkout-form__required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="checkout-form__input"
+                    autocomplete="email"
+                    required
+                  >
+                  <span class="checkout-form__error" id="error-email" role="alert"></span>
+                </div>
+              </div>
+            </section>
+
+            <!-- Shipping Address -->
+            <section class="checkout-section" aria-labelledby="shipping-address-heading">
+              <h2 id="shipping-address-heading" class="checkout-section__title">Shipping Address</h2>
+
+              <div class="checkout-form__row">
+                <div class="checkout-form__group">
+                  <label class="checkout-form__label" for="house-no">
+                    House / Flat No <span class="checkout-form__required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="house-no"
+                    name="houseNo"
+                    class="checkout-form__input"
+                    autocomplete="address-line1"
+                    required
+                  >
+                  <span class="checkout-form__error" id="error-houseNo" role="alert"></span>
+                </div>
+
+                <div class="checkout-form__group">
+                  <label class="checkout-form__label" for="street">
+                    Street / Area <span class="checkout-form__required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="street"
+                    name="street"
+                    class="checkout-form__input"
+                    autocomplete="address-line2"
+                    required
+                  >
+                  <span class="checkout-form__error" id="error-street" role="alert"></span>
+                </div>
+              </div>
+
+              <div class="checkout-form__group checkout-form__group--full">
+                <label class="checkout-form__label" for="landmark">Landmark</label>
+                <input
+                  type="text"
+                  id="landmark"
+                  name="landmark"
+                  class="checkout-form__input"
+                  autocomplete="off"
+                >
+                <span class="checkout-form__error" id="error-landmark" role="alert"></span>
+              </div>
+
+              <div class="checkout-form__row">
+                <div class="checkout-form__group">
+                  <label class="checkout-form__label" for="city">
+                    City <span class="checkout-form__required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="city"
+                    name="city"
+                    class="checkout-form__input"
+                    autocomplete="address-level2"
+                    required
+                  >
+                  <span class="checkout-form__error" id="error-city" role="alert"></span>
+                </div>
+
+                <div class="checkout-form__group">
+                  <label class="checkout-form__label" for="state">
+                    State <span class="checkout-form__required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="state"
+                    name="state"
+                    class="checkout-form__input"
+                    autocomplete="address-level1"
+                    required
+                  >
+                  <span class="checkout-form__error" id="error-state" role="alert"></span>
+                </div>
+              </div>
+
+              <div class="checkout-form__group checkout-form__group--full">
+                <label class="checkout-form__label" for="pin-code">
+                  PIN Code <span class="checkout-form__required" aria-hidden="true">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="pin-code"
+                  name="pinCode"
+                  class="checkout-form__input"
+                  inputmode="numeric"
+                  maxlength="6"
+                  autocomplete="postal-code"
+                  placeholder="6-digit PIN code"
+                  required
+                >
+                <span class="checkout-form__error" id="error-pinCode" role="alert"></span>
+              </div>
+            </section>
+
+            <!-- Payment Method -->
+            <section class="checkout-section" aria-labelledby="payment-method-heading">
+              <h2 id="payment-method-heading" class="checkout-section__title">Payment Method</h2>
+
+              <div class="payment-options" role="radiogroup" aria-label="Payment method">
+                <label class="payment-option">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="cod"
+                    class="payment-option__input"
+                    checked
+                  >
+                  <span class="payment-option__content">
+                    <span class="payment-option__label">Cash on Delivery (COD)</span>
+                    <span class="payment-option__desc">Pay with cash when your order is delivered to your doorstep.</span>
+                  </span>
+                </label>
+              </div>
+            </section>
+          </form>
+
+          <a href="index.html#products" class="btn btn--secondary checkout-page__continue">Continue Shopping</a>
+        </div>
+
+        <!-- Order Summary -->
+        <aside class="checkout-summary" id="checkout-summary" aria-labelledby="checkout-summary-heading">
+          <h2 id="checkout-summary-heading" class="checkout-summary__title">Order Summary</h2>
+
+          <p class="checkout-summary__count" id="summary-product-count">0 items</p>
+
+          <dl class="checkout-summary__rows">
+            <div class="checkout-summary__row">
+              <dt>Subtotal</dt>
+              <dd id="summary-subtotal">₹0</dd>
+            </div>
+            <div class="checkout-summary__row">
+              <dt>Discount</dt>
+              <dd class="checkout-summary__discount" id="summary-discount">− ₹0</dd>
+            </div>
+            <div class="checkout-summary__row">
+              <dt>Delivery</dt>
+              <dd class="checkout-summary__free" id="summary-delivery">Free</dd>
+            </div>
+            <div class="checkout-summary__row checkout-summary__row--total">
+              <dt>Grand Total</dt>
+              <dd id="summary-grand-total">₹0</dd>
+            </div>
+          </dl>
+
+          <button type="submit" form="checkout-form" class="btn btn--accent btn--block checkout-summary__place-order" id="place-order-btn">
+            Place Order
+          </button>
+          <p class="checkout-summary__note">Secure checkout · Free delivery on orders above ₹5,000</p>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <!-- Site footer (shared layout — keep in sync with index.html) -->
+  <footer class="footer" id="footer" role="contentinfo">
+    <div class="container footer__grid">
+      <div class="footer__brand">
+        <a href="index.html" class="logo logo--footer">
+          <span class="logo__text">HomeAppliance<span class="logo__accent">Hub</span></span>
+        </a>
+        <p>Your trusted destination for premium household appliances. Quality products, competitive prices, and exceptional service.</p>
+      </div>
+      <nav aria-label="Footer navigation">
+        <h3 class="footer__heading">Quick Links</h3>
+        <ul class="footer__links">
+          <li><a href="index.html#products">All Products</a></li>
+          <li><a href="index.html#categories">Categories</a></li>
+          <li><a href="index.html#deals">Deals</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h3 class="footer__heading">Contact Us</h3>
+        <ul class="footer__links">
+          <li><a href="tel:+919876543210">+91 98765 43210</a></li>
+          <li><a href="mailto:info@homeappliancehub.com">info@homeappliancehub.com</a></li>
+          <li><a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer">WhatsApp Us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__heading">Store Info</h3>
+        <address class="footer__address">
+          123 Commerce Street<br>
+          Mumbai, Maharashtra 400001<br>
+          India
+        </address>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <div class="container footer__bottom-inner">
+        <p>&copy; 2026 HomeAppliance Hub. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="js/checkout-page.js"></script>
+  <script type="module" src="js/modules/auth-ui.js"></script>
+</body>
+</html>
