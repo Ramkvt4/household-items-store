@@ -120,6 +120,29 @@
   line-height: 1.4;
 }
 
+.checkout-form__checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  margin-top: 0.25rem;
+}
+
+.checkout-form__checkbox {
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin-top: 0.125rem;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
+.checkout-form__checkbox-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  line-height: 1.5;
+  cursor: pointer;
+}
+
 /* Payment options */
 .payment-options {
   display: flex;

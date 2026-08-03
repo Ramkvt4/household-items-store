@@ -27,6 +27,7 @@ export const firebaseCollections = {
   inquiries: 'inquiries',
   admins: 'admins',
   carts: 'carts',
+  users: 'users',
 };
 
 /**

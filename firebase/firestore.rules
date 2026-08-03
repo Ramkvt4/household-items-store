@@ -26,5 +26,23 @@ service cloud.firestore {
     match /carts/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
+
+    // Customer orders — create own orders; read own orders (Module 8)
+    match /orders/{orderId} {
+      allow read: if request.auth != null
+        && resource.data.userId == request.auth.uid;
+      allow create: if request.resource.data.orderNumber is string
+        && request.resource.data.orderStatus == 'placed'
+        && (
+          request.resource.data.userId == null
+          || (request.auth != null && request.resource.data.userId == request.auth.uid)
+        );
+      allow update, delete: if false;
+    }
+
+    // Customer profiles — saved address (Module 8)
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
   }
 }
