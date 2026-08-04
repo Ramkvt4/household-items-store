@@ -1,0 +1,466 @@
+/* ==========================================================================
+   Account pages — My Orders, Order Details, Saved Addresses (Module 9 Phase 1)
+   ========================================================================== */
+
+.account-page {
+  padding: 2rem 0 3rem;
+}
+
+.account-page__title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.account-page__subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-bottom: 1.75rem;
+}
+
+.account-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 12rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.account-empty,
+.account-error {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.account-empty__icon,
+.account-error__icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.account-empty__title,
+.account-error__title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.account-empty__text,
+.account-error__text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.account-content[hidden],
+.account-loading[hidden],
+.account-empty[hidden],
+.account-error[hidden] {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   My Orders — card list
+   -------------------------------------------------------------------------- */
+
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.order-card {
+  display: block;
+  padding: 1.25rem 1.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.order-card:hover,
+.order-card:focus-visible {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-md);
+  outline: none;
+}
+
+.order-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.order-card__number {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-secondary);
+}
+
+.order-card__date {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+}
+
+.order-card__status {
+  display: inline-block;
+  padding: 0.25rem 0.625rem;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary-light);
+  color: var(--color-secondary);
+}
+
+.order-card__meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.order-card__meta-label {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.order-card__meta-value {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.order-card__meta-value--total {
+  color: var(--color-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   Order Details
+   -------------------------------------------------------------------------- */
+
+.order-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.order-panel {
+  padding: 1.25rem 1.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.order-panel--full {
+  grid-column: 1 / -1;
+}
+
+.order-panel__title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-secondary);
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.order-detail-rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.order-detail-rows__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.625rem 0;
+  font-size: var(--font-size-sm);
+}
+
+.order-detail-rows__row + .order-detail-rows__row {
+  border-top: 1px solid var(--color-border);
+}
+
+.order-detail-rows__label {
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.order-detail-rows__value {
+  color: var(--color-text);
+  font-weight: 600;
+  text-align: right;
+}
+
+.order-detail-rows__value--highlight {
+  color: var(--color-secondary);
+  font-size: var(--font-size-base);
+}
+
+.order-address {
+  font-size: var(--font-size-sm);
+  line-height: 1.7;
+  color: var(--color-text);
+}
+
+.order-address__line {
+  margin: 0;
+}
+
+.order-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.order-item {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.order-item__image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.order-item__brand {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.25rem;
+}
+
+.order-item__name {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-secondary);
+  margin-bottom: 0.375rem;
+  line-height: 1.4;
+}
+
+.order-item__qty {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.order-item__price {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-secondary);
+  white-space: nowrap;
+}
+
+.order-details-actions {
+  margin-top: 1.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   Profile
+   -------------------------------------------------------------------------- */
+
+.profile-card {
+  max-width: 520px;
+  padding: 1.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.profile-card__header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.profile-avatar {
+  flex-shrink: 0;
+  width: 4.5rem;
+  height: 4.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-light);
+  color: var(--color-secondary);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.profile-card__name {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-secondary);
+  margin: 0 0 0.25rem;
+}
+
+.profile-card__hint {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.profile-card__row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  font-size: var(--font-size-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.profile-card__row:last-child {
+  border-bottom: none;
+}
+
+.profile-card__label {
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.profile-card__value {
+  color: var(--color-text);
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.profile-card__actions {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+/* --------------------------------------------------------------------------
+   Saved Addresses
+   -------------------------------------------------------------------------- */
+
+.saved-address-card {
+  max-width: 520px;
+  padding: 1.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.saved-address-card__title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-secondary);
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.saved-address-rows__row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 0.75rem;
+  padding: 0.625rem 0;
+  font-size: var(--font-size-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.saved-address-rows__row:last-child {
+  border-bottom: none;
+}
+
+.saved-address-rows__label {
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.saved-address-rows__value {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .account-page {
+    padding: 1.5rem 0 2.5rem;
+  }
+
+  .account-page__title {
+    font-size: var(--font-size-xl);
+  }
+
+  .order-card {
+    padding: 1.125rem;
+  }
+
+  .order-card__meta {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .order-details-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .order-item {
+    grid-template-columns: 64px 1fr;
+  }
+
+  .order-item__price {
+    grid-column: 2;
+  }
+
+  .order-item__image {
+    width: 64px;
+    height: 64px;
+  }
+
+  .saved-address-rows__row {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+
+  .profile-card__row {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+
+  .profile-card__actions .btn {
+    width: 100%;
+  }
+}

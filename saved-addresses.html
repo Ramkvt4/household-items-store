@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <title>Order Placed — HomeAppliance Hub</title>
-  <meta name="description" content="Your order has been placed successfully at HomeAppliance Hub.">
+  <title>Saved Addresses — HomeAppliance Hub</title>
+  <meta name="description" content="View your saved shipping address at HomeAppliance Hub.">
   <meta name="robots" content="noindex, follow">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,7 +15,7 @@
 
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/cart.css">
-  <link rel="stylesheet" href="css/order-success.css">
+  <link rel="stylesheet" href="css/account.css">
   <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
 </head>
 <body>
@@ -93,51 +93,39 @@
     </nav>
   </header>
 
-  <main id="main-content" class="order-success-page">
+  <main id="main-content" class="account-page" aria-busy="true">
     <div class="container">
       <nav class="breadcrumb" aria-label="Breadcrumb">
         <ol class="breadcrumb__list">
           <li><a href="index.html">Home</a></li>
-          <li aria-current="page">Order Confirmation</li>
+          <li aria-current="page">Saved Addresses</li>
         </ol>
       </nav>
 
-      <section class="order-success-card" id="order-success-card" hidden aria-labelledby="order-success-heading">
-        <div class="order-success-card__icon" aria-hidden="true">✓</div>
-        <h1 class="order-success-card__title" id="order-success-heading">Order Placed Successfully</h1>
-        <p class="order-success-card__text">
-          Thank you for shopping with HomeAppliance Hub. Your order has been received and is being processed.
-        </p>
+      <h1 class="account-page__title">Saved Addresses</h1>
+      <p class="account-page__subtitle">Your shipping address saved for checkout</p>
 
-        <dl class="order-success-details">
-          <div class="order-success-details__row">
-            <dt class="order-success-details__label">Order Number</dt>
-            <dd class="order-success-details__value order-success-details__value--highlight" id="success-order-number">—</dd>
-          </div>
-          <div class="order-success-details__row">
-            <dt class="order-success-details__label">Payment Method</dt>
-            <dd class="order-success-details__value" id="success-payment-method">—</dd>
-          </div>
-          <div class="order-success-details__row">
-            <dt class="order-success-details__label">Order Status</dt>
-            <dd class="order-success-details__value" id="success-order-status">—</dd>
-          </div>
-          <div class="order-success-details__row">
-            <dt class="order-success-details__label">Grand Total</dt>
-            <dd class="order-success-details__value" id="success-grand-total">—</dd>
-          </div>
-        </dl>
+      <div class="account-loading" id="addresses-loading">Loading saved addresses…</div>
 
-        <div class="order-success-card__actions">
-          <a href="index.html#products" class="btn btn--primary btn--block">Continue Shopping</a>
-          <a href="my-orders.html" class="btn btn--secondary btn--block" id="view-orders-btn">View My Orders</a>
-        </div>
+      <section class="account-empty" id="addresses-empty" hidden aria-labelledby="addresses-empty-heading">
+        <div class="account-empty__icon" aria-hidden="true">📍</div>
+        <h2 class="account-empty__title" id="addresses-empty-heading">No Saved Addresses Yet</h2>
+        <p class="account-empty__text">No saved addresses yet. Save an address at checkout to see it here.</p>
+        <a href="index.html#products" class="btn btn--primary">Start Shopping</a>
       </section>
 
-      <section class="order-success-empty" id="order-success-empty" hidden aria-labelledby="order-success-empty-heading">
-        <h1 class="order-success-empty__title" id="order-success-empty-heading">No Recent Order Found</h1>
-        <p class="order-success-empty__text">We couldn't find a recent order on this device. If you just placed an order, try again from checkout.</p>
-        <a href="index.html#products" class="btn btn--primary">Continue Shopping</a>
+      <section class="account-error" id="addresses-error" hidden aria-labelledby="addresses-error-heading">
+        <div class="account-error__icon" aria-hidden="true">⚠️</div>
+        <h2 class="account-error__title" id="addresses-error-heading">Unable to Load Address</h2>
+        <p class="account-error__text" id="addresses-error-text">Something went wrong while loading your saved address. Please try again.</p>
+        <button type="button" class="btn btn--secondary" onclick="window.location.reload()">Try Again</button>
+      </section>
+
+      <section class="account-content" id="addresses-content" hidden aria-labelledby="saved-address-heading">
+        <article class="saved-address-card">
+          <h2 class="saved-address-card__title" id="saved-address-heading">Shipping Address</h2>
+          <dl class="saved-address-rows" id="saved-address-rows"></dl>
+        </article>
       </section>
     </div>
   </main>
@@ -182,7 +170,7 @@
     </div>
   </footer>
 
-  <script type="module" src="js/order-success-page.js"></script>
+  <script type="module" src="js/saved-addresses-page.js"></script>
   <script type="module" src="js/modules/auth-ui.js"></script>
 </body>
 </html>

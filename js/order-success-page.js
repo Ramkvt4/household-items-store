@@ -87,22 +87,7 @@ function renderEmptyState() {
   }
 }
 
-/**
- * Bind placeholder action for View My Orders.
- */
-function bindViewOrdersPlaceholder() {
-  const viewOrdersBtn = document.getElementById('view-orders-btn');
-  if (!viewOrdersBtn || viewOrdersBtn.dataset.eventsBound === 'true') return;
-
-  viewOrdersBtn.dataset.eventsBound = 'true';
-  viewOrdersBtn.addEventListener('click', (event) => {
-    event.preventDefault();
-  });
-}
-
 document.addEventListener('DOMContentLoaded', async () => {
-  bindViewOrdersPlaceholder();
-
   await initCartService();
   updateHeaderBadge(getCartCount());
 

@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <title>Order Placed — HomeAppliance Hub</title>
-  <meta name="description" content="Your order has been placed successfully at HomeAppliance Hub.">
+  <title>Order Details — HomeAppliance Hub</title>
+  <meta name="description" content="View complete order details at HomeAppliance Hub.">
   <meta name="robots" content="noindex, follow">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,7 +15,7 @@
 
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/cart.css">
-  <link rel="stylesheet" href="css/order-success.css">
+  <link rel="stylesheet" href="css/account.css">
   <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
 </head>
 <body>
@@ -93,52 +93,67 @@
     </nav>
   </header>
 
-  <main id="main-content" class="order-success-page">
+  <main id="main-content" class="account-page" aria-busy="true">
     <div class="container">
       <nav class="breadcrumb" aria-label="Breadcrumb">
         <ol class="breadcrumb__list">
           <li><a href="index.html">Home</a></li>
-          <li aria-current="page">Order Confirmation</li>
+          <li><a href="my-orders.html">My Orders</a></li>
+          <li aria-current="page">Order Details</li>
         </ol>
       </nav>
 
-      <section class="order-success-card" id="order-success-card" hidden aria-labelledby="order-success-heading">
-        <div class="order-success-card__icon" aria-hidden="true">✓</div>
-        <h1 class="order-success-card__title" id="order-success-heading">Order Placed Successfully</h1>
-        <p class="order-success-card__text">
-          Thank you for shopping with HomeAppliance Hub. Your order has been received and is being processed.
-        </p>
+      <h1 class="account-page__title">Order Details</h1>
+      <p class="account-page__subtitle" id="order-details-subtitle">View your order information</p>
 
-        <dl class="order-success-details">
-          <div class="order-success-details__row">
-            <dt class="order-success-details__label">Order Number</dt>
-            <dd class="order-success-details__value order-success-details__value--highlight" id="success-order-number">—</dd>
-          </div>
-          <div class="order-success-details__row">
-            <dt class="order-success-details__label">Payment Method</dt>
-            <dd class="order-success-details__value" id="success-payment-method">—</dd>
-          </div>
-          <div class="order-success-details__row">
-            <dt class="order-success-details__label">Order Status</dt>
-            <dd class="order-success-details__value" id="success-order-status">—</dd>
-          </div>
-          <div class="order-success-details__row">
-            <dt class="order-success-details__label">Grand Total</dt>
-            <dd class="order-success-details__value" id="success-grand-total">—</dd>
-          </div>
-        </dl>
+      <div class="account-loading" id="order-details-loading">Loading order details…</div>
 
-        <div class="order-success-card__actions">
-          <a href="index.html#products" class="btn btn--primary btn--block">Continue Shopping</a>
-          <a href="my-orders.html" class="btn btn--secondary btn--block" id="view-orders-btn">View My Orders</a>
+      <section class="account-empty" id="order-details-empty" hidden aria-labelledby="order-details-empty-heading">
+        <div class="account-empty__icon" aria-hidden="true">📦</div>
+        <h2 class="account-empty__title" id="order-details-empty-heading">Order Not Found</h2>
+        <p class="account-empty__text">We couldn’t find this order, or it doesn’t belong to your account.</p>
+        <a href="my-orders.html" class="btn btn--primary">Back to My Orders</a>
+      </section>
+
+      <section class="account-error" id="order-details-error" hidden aria-labelledby="order-details-error-heading">
+        <div class="account-error__icon" aria-hidden="true">⚠️</div>
+        <h2 class="account-error__title" id="order-details-error-heading">Unable to Load Order</h2>
+        <p class="account-error__text" id="order-details-error-text">Something went wrong while loading this order. Please try again.</p>
+        <button type="button" class="btn btn--secondary" onclick="window.location.reload()">Try Again</button>
+      </section>
+
+      <div class="account-content" id="order-details-content" hidden>
+        <div class="order-details-grid">
+          <section class="order-panel" aria-labelledby="order-overview-heading">
+            <h2 class="order-panel__title" id="order-overview-heading">Order Overview</h2>
+            <dl class="order-detail-rows" id="order-overview"></dl>
+          </section>
+
+          <section class="order-panel" aria-labelledby="order-customer-heading">
+            <h2 class="order-panel__title" id="order-customer-heading">Customer Information</h2>
+            <dl class="order-detail-rows" id="order-customer"></dl>
+          </section>
+
+          <section class="order-panel" aria-labelledby="order-shipping-heading">
+            <h2 class="order-panel__title" id="order-shipping-heading">Shipping Address</h2>
+            <div class="order-address" id="order-shipping-address"></div>
+          </section>
+
+          <section class="order-panel" aria-labelledby="order-totals-heading">
+            <h2 class="order-panel__title" id="order-totals-heading">Order Summary</h2>
+            <dl class="order-detail-rows" id="order-totals"></dl>
+          </section>
+
+          <section class="order-panel order-panel--full" aria-labelledby="order-items-heading">
+            <h2 class="order-panel__title" id="order-items-heading">Ordered Products</h2>
+            <div class="order-items" id="order-items"></div>
+          </section>
         </div>
-      </section>
 
-      <section class="order-success-empty" id="order-success-empty" hidden aria-labelledby="order-success-empty-heading">
-        <h1 class="order-success-empty__title" id="order-success-empty-heading">No Recent Order Found</h1>
-        <p class="order-success-empty__text">We couldn't find a recent order on this device. If you just placed an order, try again from checkout.</p>
-        <a href="index.html#products" class="btn btn--primary">Continue Shopping</a>
-      </section>
+        <div class="order-details-actions">
+          <a href="my-orders.html" class="btn btn--secondary">Back to My Orders</a>
+        </div>
+      </div>
     </div>
   </main>
 
@@ -182,7 +197,7 @@
     </div>
   </footer>
 
-  <script type="module" src="js/order-success-page.js"></script>
+  <script type="module" src="js/order-details-page.js"></script>
   <script type="module" src="js/modules/auth-ui.js"></script>
 </body>
 </html>

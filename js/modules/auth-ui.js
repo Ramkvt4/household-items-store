@@ -180,16 +180,16 @@ function renderAccountMenu(user) {
 
         <ul class="account-menu__list">
           <li role="none">
-            <a href="#" class="account-menu__item" role="menuitem">My Profile</a>
+            <a href="profile.html" class="account-menu__item" role="menuitem">My Profile</a>
           </li>
           <li role="none">
-            <a href="#" class="account-menu__item" role="menuitem">My Orders</a>
+            <a href="my-orders.html" class="account-menu__item" role="menuitem">My Orders</a>
           </li>
           <li role="none">
-            <a href="#" class="account-menu__item" role="menuitem">Wishlist</a>
+            <a href="wishlist.html" class="account-menu__item" role="menuitem">Wishlist</a>
           </li>
           <li role="none">
-            <a href="#" class="account-menu__item" role="menuitem">Saved Addresses</a>
+            <a href="saved-addresses.html" class="account-menu__item" role="menuitem">Saved Addresses</a>
           </li>
           <li class="account-menu__divider" role="separator" aria-hidden="true"></li>
           <li role="none">
@@ -203,7 +203,12 @@ function renderAccountMenu(user) {
 
   const trigger = document.getElementById('account-menu-trigger');
   const logoutBtn = slot.querySelector('.account-menu__logout');
-  const placeholderLinks = slot.querySelectorAll('.account-menu__item:not(.account-menu__logout)');
+  const placeholderLinks = slot.querySelectorAll(
+    '.account-menu__item[href="#"]:not(.account-menu__logout)',
+  );
+  const navLinks = slot.querySelectorAll(
+    '.account-menu__item[href]:not([href="#"]):not(.account-menu__logout)',
+  );
 
   trigger?.addEventListener('click', (event) => {
     event.stopPropagation();
@@ -215,6 +220,12 @@ function renderAccountMenu(user) {
   placeholderLinks.forEach((link) => {
     link.addEventListener('click', (event) => {
       event.preventDefault();
+      closeAccountDropdown();
+    });
+  });
+
+  navLinks.forEach((link) => {
+    link.addEventListener('click', () => {
       closeAccountDropdown();
     });
   });
