@@ -32,6 +32,7 @@ const FirebaseConfig = {
     admins: 'admins',
     carts: 'carts',
     users: 'users',
+    coupons: 'coupons',
   },
 
   storagePaths: {

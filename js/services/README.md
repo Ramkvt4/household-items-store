@@ -23,6 +23,7 @@ gradually in Modules 11–13.
 | Order Service | `js/modules/order-service.js` | Order create + customer order reads |
 | Wishlist Service | `js/modules/wishlist-service.js` | Wishlist CRUD + realtime subscription |
 | Wishlist Integration | `js/modules/wishlist-integration.js` | Product-card heart toggle UI |
+| Coupon Service | `js/services/coupon-service.js` | Coupon fetch, validation, discount calculation (Module 11 Phase 1) |
 
 ---
 
@@ -32,7 +33,6 @@ These modules are **not implemented** yet. Names are reserved for upcoming work:
 
 | Service | Planned responsibility |
 |---------|------------------------|
-| Coupon Service | Coupon codes, discount validation, order discount application |
 | Review Service | Product reviews and ratings persistence |
 | Admin Service | Consolidated admin operations beyond product CRUD |
 | Notification Service | Order/status customer notifications (optional) |
