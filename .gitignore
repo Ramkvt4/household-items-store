@@ -1,0 +1,24 @@
+# Dependencies / tooling
+node_modules/
+.firebase/
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local env / secrets (if added later)
+.env
+.env.*
+!.env.example
+credentials.json
+serviceAccount*.json
+
+# Build / coverage
+dist/
+coverage/

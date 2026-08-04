@@ -56,7 +56,7 @@ const ModalModule = (() => {
     const galleryHtml = images.length > 1
       ? `<div class="modal__gallery">${images.map((url, i) => `
           <button type="button" class="modal__thumb${i === 0 ? ' modal__thumb--active' : ''}" data-image="${url}" aria-label="View image ${i + 1}">
-            <img src="${url}" alt="" width="64" height="64">
+            <img src="${url}" alt="" width="64" height="64" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/images/products/placeholder.svg'">
           </button>
         `).join('')}</div>`
       : '';
@@ -83,6 +83,8 @@ const ModalModule = (() => {
           width="400"
           height="400"
           loading="lazy"
+          decoding="async"
+          onerror="this.onerror=null;this.src='assets/images/products/placeholder.svg'"
         >
         ${galleryHtml}
       </div>

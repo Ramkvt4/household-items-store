@@ -14,6 +14,10 @@ import {
 import { initFirestore, getCollectionRef, getDocRef } from './firestore-service.js';
 import { firebaseCollections } from '../config/firebase-config.esm.js';
 import { getOrderTimestampMs } from '../utils/order-display.js';
+import {
+  isNetworkOrOfflineError,
+  isPermissionError,
+} from '../utils/network-error.js';
 
 /**
  * Persist an order document to Firestore.
@@ -92,13 +96,11 @@ export async function getOrderById(orderId) {
  * @returns {string}
  */
 export function getFriendlyOrderErrorMessage(error) {
-  const message = error instanceof Error ? error.message : String(error ?? '');
-
-  if (/network|offline|unavailable|failed-precondition/i.test(message)) {
+  if (isNetworkOrOfflineError(error)) {
     return 'Unable to place your order right now. Please check your connection and try again.';
   }
 
-  if (/permission|unauthenticated|auth/i.test(message)) {
+  if (isPermissionError(error)) {
     return 'Unable to place your order. Please sign in and try again.';
   }
 
@@ -111,13 +113,11 @@ export function getFriendlyOrderErrorMessage(error) {
  * @returns {string}
  */
 export function getFriendlyOrderReadErrorMessage(error) {
-  const message = error instanceof Error ? error.message : String(error ?? '');
-
-  if (/network|offline|unavailable|failed-precondition/i.test(message)) {
+  if (isNetworkOrOfflineError(error)) {
     return 'Unable to load your orders right now. Please check your connection and try again.';
   }
 
-  if (/permission|unauthenticated|auth/i.test(message)) {
+  if (isPermissionError(error)) {
     return 'Unable to load your orders. Please sign in and try again.';
   }
 

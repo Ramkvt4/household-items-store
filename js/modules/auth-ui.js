@@ -8,6 +8,10 @@ import {
   onAuthStateChanged,
   signOut,
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import {
+  assertAccountAllowed,
+  ensureCustomerProfile,
+} from './user-profile-service.js';
 
 const USER_ICON_SVG = `
   <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
@@ -257,6 +261,7 @@ function updateAuthHeader(user) {
 
 /**
  * Initialize auth state listener for header UI.
+ * Enforces blocked/deleted accounts and syncs Firestore profile for admin listing.
  */
 async function initAuthUI() {
   await initFirebaseAuth();
@@ -266,7 +271,26 @@ async function initAuthUI() {
     return;
   }
 
-  onAuthStateChanged(auth, updateAuthHeader);
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      try {
+        await assertAccountAllowed(user.uid);
+      } catch (error) {
+        console.warn('[AuthUI] Account not allowed:', error.message);
+        await signOut(auth);
+        updateAuthHeader(null);
+        return;
+      }
+
+      try {
+        await ensureCustomerProfile(user);
+      } catch (error) {
+        console.error('[AuthUI] Profile sync failed:', error);
+      }
+    }
+
+    updateAuthHeader(user);
+  });
 }
 
 if (getAuthActionSlot()) {

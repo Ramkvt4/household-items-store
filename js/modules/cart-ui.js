@@ -3,6 +3,11 @@
  * Toast notifications and async control locking for cart actions.
  */
 
+import {
+  isNetworkOrOfflineError,
+  isPermissionError,
+} from '../utils/network-error.js';
+
 /** @type {boolean} */
 let cartUiStylesInjected = false;
 
@@ -78,13 +83,11 @@ export function showCartToast(message, type = 'success') {
  * @returns {string}
  */
 export function getFriendlyCartErrorMessage(error) {
-  const message = error instanceof Error ? error.message : String(error ?? '');
-
-  if (/network|offline|unavailable|failed-precondition/i.test(message)) {
+  if (isNetworkOrOfflineError(error)) {
     return 'Unable to update your cart right now. Please check your connection and try again.';
   }
 
-  if (/permission|unauthenticated|auth/i.test(message)) {
+  if (isPermissionError(error)) {
     return 'Please sign in again to update your cart.';
   }
 

@@ -73,7 +73,7 @@ const AdminProductList = (() => {
 
     tbody.innerHTML = products.map((p) => `
       <tr>
-        <td><img class="admin-table__thumb" src="${p.image ? '../' + p.image : '../assets/images/products/placeholder.svg'}" alt=""></td>
+        <td><img class="admin-table__thumb" src="${p.image ? '../' + p.image : '../assets/images/products/placeholder.svg'}" alt="${AdminUI.escapeHtml(p.name || '')}" width="48" height="48" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='../assets/images/products/placeholder.svg'"></td>
         <td>
           <strong>${AdminUI.escapeHtml(p.name)}</strong><br>
           <small style="color: var(--color-text-muted)">${AdminUI.escapeHtml(p.brand)}</small>

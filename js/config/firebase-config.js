@@ -94,7 +94,6 @@ const FirebaseConfig = {
       }
 
       await db.collection('connection_check').doc('ping').get();
-      console.log('Firebase Connected Successfully');
       return db;
     } catch (error) {
       console.error(error);

@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard — HomeAppliance Hub</title>
+  <meta name="description" content="Admin dashboard for HomeAppliance Hub — manage products, orders, and customers.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://homeappliancehub.example.com/admin/index.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -41,7 +44,10 @@
     <aside class="admin-sidebar">
       <div class="admin-sidebar__brand">HomeAppliance<span>Hub</span></div>
       <nav class="admin-sidebar__nav">
-        <a href="#" class="admin-sidebar__link admin-sidebar__link--active" data-view="products">Product List</a>
+        <a href="#" class="admin-sidebar__link admin-sidebar__link--active" data-view="dashboard">Dashboard</a>
+        <a href="#" class="admin-sidebar__link" data-view="products">Product List</a>
+        <a href="#" class="admin-sidebar__link" data-view="orders">Orders</a>
+        <a href="#" class="admin-sidebar__link" data-view="customers">Customers</a>
         <a href="#" class="admin-sidebar__link" data-view="add">Add Product</a>
       </nav>
       <div class="admin-sidebar__footer">
@@ -53,16 +59,247 @@
 
     <div class="admin-main">
       <header class="admin-header">
-        <h1 class="admin-header__title" id="page-title">Products</h1>
-        <div class="admin-header__actions">
+        <h1 class="admin-header__title" id="page-title">Dashboard</h1>
+        <div class="admin-header__actions" id="header-dashboard-actions"></div>
+        <div class="admin-header__actions" id="header-product-actions" hidden>
           <button type="button" class="btn btn--secondary btn--sm" id="seed-btn">Import Sample Data</button>
           <button type="button" class="btn btn--primary btn--sm" id="add-product-btn">+ Add Product</button>
+        </div>
+        <div class="admin-header__actions" id="header-order-actions" hidden>
+          <button type="button" class="btn btn--secondary btn--sm" id="orders-export-btn">Export CSV</button>
+        </div>
+        <div class="admin-header__actions" id="header-customer-actions" hidden>
+          <button type="button" class="btn btn--secondary btn--sm" id="customers-export-btn">Export Customers CSV</button>
         </div>
       </header>
 
       <main class="admin-content">
+        <!-- Analytics Dashboard -->
+        <section id="view-dashboard">
+          <div id="dashboard-loading" class="admin-loading">Loading dashboard...</div>
+
+          <div class="admin-dashboard" id="dashboard-content">
+            <div class="admin-stats admin-stats--kpi">
+              <div class="admin-stat">
+                <div class="admin-stat__label">Total Revenue</div>
+                <div class="admin-stat__value" id="dash-kpi-revenue">₹0</div>
+              </div>
+              <div class="admin-stat">
+                <div class="admin-stat__label">Today's Revenue</div>
+                <div class="admin-stat__value" id="dash-kpi-today-revenue">₹0</div>
+              </div>
+              <div class="admin-stat">
+                <div class="admin-stat__label">Total Orders</div>
+                <div class="admin-stat__value" id="dash-kpi-orders">0</div>
+              </div>
+              <div class="admin-stat">
+                <div class="admin-stat__label">Pending Orders</div>
+                <div class="admin-stat__value" id="dash-kpi-pending">0</div>
+              </div>
+              <div class="admin-stat">
+                <div class="admin-stat__label">Delivered Orders</div>
+                <div class="admin-stat__value" id="dash-kpi-delivered">0</div>
+              </div>
+              <div class="admin-stat">
+                <div class="admin-stat__label">Cancelled Orders</div>
+                <div class="admin-stat__value" id="dash-kpi-cancelled">0</div>
+              </div>
+              <div class="admin-stat">
+                <div class="admin-stat__label">Total Customers</div>
+                <div class="admin-stat__value" id="dash-kpi-customers">0</div>
+              </div>
+              <div class="admin-stat">
+                <div class="admin-stat__label">Total Products</div>
+                <div class="admin-stat__value" id="dash-kpi-products">0</div>
+              </div>
+              <div class="admin-stat">
+                <div class="admin-stat__label">Out of Stock</div>
+                <div class="admin-stat__value" id="dash-kpi-outstock">0</div>
+              </div>
+              <div class="admin-stat">
+                <div class="admin-stat__label">Low Stock</div>
+                <div class="admin-stat__value" id="dash-kpi-lowstock">0</div>
+              </div>
+            </div>
+
+            <div class="admin-panel">
+              <h2 class="admin-panel__title">Quick Actions</h2>
+              <div class="admin-quick-actions">
+                <button type="button" class="btn btn--primary btn--sm" id="dash-action-add-product">Add Product</button>
+                <button type="button" class="btn btn--secondary btn--sm" id="dash-action-orders">View Orders</button>
+                <button type="button" class="btn btn--secondary btn--sm" id="dash-action-customers">View Customers</button>
+                <button type="button" class="btn btn--secondary btn--sm" id="dash-action-export-products">Export Products</button>
+                <button type="button" class="btn btn--secondary btn--sm" id="dash-action-export-orders">Export Orders</button>
+                <button type="button" class="btn btn--secondary btn--sm" id="dash-action-export-customers">Export Customers</button>
+              </div>
+            </div>
+
+            <div class="admin-dashboard__grid">
+              <div class="admin-panel">
+                <h2 class="admin-panel__title">Revenue Summary</h2>
+                <div class="admin-stats admin-stats--nested">
+                  <div class="admin-stat admin-stat--compact">
+                    <div class="admin-stat__label">Today</div>
+                    <div class="admin-stat__value" id="dash-rev-today">₹0</div>
+                  </div>
+                  <div class="admin-stat admin-stat--compact">
+                    <div class="admin-stat__label">This Week</div>
+                    <div class="admin-stat__value" id="dash-rev-week">₹0</div>
+                  </div>
+                  <div class="admin-stat admin-stat--compact">
+                    <div class="admin-stat__label">This Month</div>
+                    <div class="admin-stat__value" id="dash-rev-month">₹0</div>
+                  </div>
+                  <div class="admin-stat admin-stat--compact">
+                    <div class="admin-stat__label">This Year</div>
+                    <div class="admin-stat__value" id="dash-rev-year">₹0</div>
+                  </div>
+                  <div class="admin-stat admin-stat--compact">
+                    <div class="admin-stat__label">Lifetime</div>
+                    <div class="admin-stat__value" id="dash-rev-lifetime">₹0</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="admin-panel">
+                <h2 class="admin-panel__title">Order Analytics</h2>
+                <div class="admin-stats admin-stats--nested" id="dash-order-status"></div>
+              </div>
+            </div>
+
+            <div class="admin-dashboard__grid">
+              <div class="admin-panel">
+                <h2 class="admin-panel__title">Best Selling Products</h2>
+                <div class="admin-table-wrap admin-table-wrap--flush">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Image</th>
+                        <th>Product</th>
+                        <th>Units Sold</th>
+                        <th>Revenue</th>
+                        <th>Avg Rating</th>
+                      </tr>
+                    </thead>
+                    <tbody id="dash-bestselling-tbody"></tbody>
+                  </table>
+                  <div id="dash-bestselling-empty" class="admin-empty admin-empty--sm" hidden>
+                    <p>No sales data yet.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="admin-panel">
+                <h2 class="admin-panel__title">Low Stock Alert</h2>
+                <div class="admin-table-wrap admin-table-wrap--flush">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Image</th>
+                        <th>Product</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="dash-lowstock-tbody"></tbody>
+                  </table>
+                  <div id="dash-lowstock-empty" class="admin-empty admin-empty--sm" hidden>
+                    <p>All products have healthy stock.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="admin-dashboard__grid">
+              <div class="admin-panel">
+                <h2 class="admin-panel__title">Recent Orders</h2>
+                <div class="admin-table-wrap admin-table-wrap--flush">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Order Number</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="dash-recent-orders-tbody"></tbody>
+                  </table>
+                  <div id="dash-recent-orders-empty" class="admin-empty admin-empty--sm" hidden>
+                    <p>No orders yet.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="admin-panel">
+                <h2 class="admin-panel__title">Recent Customers</h2>
+                <div class="admin-table-wrap admin-table-wrap--flush">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Registered</th>
+                        <th>Orders</th>
+                      </tr>
+                    </thead>
+                    <tbody id="dash-recent-customers-tbody"></tbody>
+                  </table>
+                  <div id="dash-recent-customers-empty" class="admin-empty admin-empty--sm" hidden>
+                    <p>No customers yet.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="admin-dashboard__grid">
+              <div class="admin-panel">
+                <h2 class="admin-panel__title">Category Summary</h2>
+                <div class="admin-table-wrap admin-table-wrap--flush">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Category</th>
+                        <th>Products</th>
+                        <th>Units Sold</th>
+                        <th>Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody id="dash-category-tbody"></tbody>
+                  </table>
+                  <div id="dash-category-empty" class="admin-empty admin-empty--sm" hidden>
+                    <p>No category data yet.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="admin-panel">
+                <h2 class="admin-panel__title">Top Customers</h2>
+                <div class="admin-table-wrap admin-table-wrap--flush">
+                  <table class="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Customer Name</th>
+                        <th>Orders</th>
+                        <th>Total Purchase</th>
+                        <th>Last Order</th>
+                      </tr>
+                    </thead>
+                    <tbody id="dash-top-customers-tbody"></tbody>
+                  </table>
+                  <div id="dash-top-customers-empty" class="admin-empty admin-empty--sm" hidden>
+                    <p>No customer purchases yet.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <!-- Product List -->
-        <section id="view-products">
+        <section id="view-products" hidden>
           <div class="admin-stats">
             <div class="admin-stat">
               <div class="admin-stat__label">Total Products</div>
@@ -99,6 +336,164 @@
             <div id="products-empty" class="admin-empty" hidden>
               <p>No products yet.</p>
               <button type="button" class="btn btn--primary" id="empty-add-btn">Add Your First Product</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Orders Management -->
+        <section id="view-orders" hidden>
+          <div class="admin-stats">
+            <div class="admin-stat">
+              <div class="admin-stat__label">Total Orders</div>
+              <div class="admin-stat__value" id="order-stat-total">0</div>
+            </div>
+            <div class="admin-stat">
+              <div class="admin-stat__label">Pending Orders</div>
+              <div class="admin-stat__value" id="order-stat-pending">0</div>
+            </div>
+            <div class="admin-stat">
+              <div class="admin-stat__label">Delivered Orders</div>
+              <div class="admin-stat__value" id="order-stat-delivered">0</div>
+            </div>
+            <div class="admin-stat">
+              <div class="admin-stat__label">Cancelled Orders</div>
+              <div class="admin-stat__value" id="order-stat-cancelled">0</div>
+            </div>
+            <div class="admin-stat">
+              <div class="admin-stat__label">Total Revenue</div>
+              <div class="admin-stat__value" id="order-stat-revenue">₹0</div>
+            </div>
+          </div>
+
+          <div class="admin-toolbar">
+            <div class="admin-toolbar__search">
+              <label class="visually-hidden" for="orders-search">Search orders</label>
+              <input
+                type="search"
+                id="orders-search"
+                class="admin-form__input"
+                placeholder="Search by name, order number, or email"
+              >
+            </div>
+            <div class="admin-toolbar__filters">
+              <label class="visually-hidden" for="orders-filter">Filter by status</label>
+              <select id="orders-filter" class="admin-form__select">
+                <option value="all">All</option>
+                <option value="placed">Placed</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="packed">Packed</option>
+                <option value="shipped">Shipped</option>
+                <option value="out_for_delivery">Out For Delivery</option>
+                <option value="delivered">Delivered</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+              <label class="visually-hidden" for="orders-sort">Sort orders</label>
+              <select id="orders-sort" class="admin-form__select">
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+                <option value="highest">Highest Amount</option>
+                <option value="lowest">Lowest Amount</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="admin-table-wrap">
+            <div id="orders-loading" class="admin-loading">Loading orders...</div>
+            <table class="admin-table admin-table--orders" id="orders-table" hidden>
+              <thead>
+                <tr>
+                  <th>Order Number</th>
+                  <th>Customer Name</th>
+                  <th>Customer Email</th>
+                  <th>Order Date</th>
+                  <th>Items</th>
+                  <th>Total Amount</th>
+                  <th>Payment</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="orders-tbody"></tbody>
+            </table>
+            <div id="orders-empty" class="admin-empty" hidden>
+              <p>No orders yet.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Customers Management -->
+        <section id="view-customers" hidden>
+          <div class="admin-stats">
+            <div class="admin-stat">
+              <div class="admin-stat__label">Total Customers</div>
+              <div class="admin-stat__value" id="customer-stat-total">0</div>
+            </div>
+            <div class="admin-stat">
+              <div class="admin-stat__label">Verified Customers</div>
+              <div class="admin-stat__value" id="customer-stat-verified">0</div>
+            </div>
+            <div class="admin-stat">
+              <div class="admin-stat__label">Customers with Orders</div>
+              <div class="admin-stat__value" id="customer-stat-with-orders">0</div>
+            </div>
+            <div class="admin-stat">
+              <div class="admin-stat__label">New Customers (30 Days)</div>
+              <div class="admin-stat__value" id="customer-stat-new">0</div>
+            </div>
+          </div>
+
+          <div class="admin-toolbar">
+            <div class="admin-toolbar__search">
+              <label class="visually-hidden" for="customers-search">Search customers</label>
+              <input
+                type="search"
+                id="customers-search"
+                class="admin-form__input"
+                placeholder="Search by name, email, or phone"
+              >
+            </div>
+            <div class="admin-toolbar__filters">
+              <label class="visually-hidden" for="customers-filter">Filter customers</label>
+              <select id="customers-filter" class="admin-form__select">
+                <option value="all">All Customers</option>
+                <option value="verified">Verified</option>
+                <option value="unverified">Unverified</option>
+                <option value="with_orders">With Orders</option>
+                <option value="without_orders">Without Orders</option>
+                <option value="blocked">Blocked</option>
+                <option value="active">Active</option>
+              </select>
+              <label class="visually-hidden" for="customers-sort">Sort customers</label>
+              <select id="customers-sort" class="admin-form__select">
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+                <option value="highest_purchase">Highest Purchase</option>
+                <option value="lowest_purchase">Lowest Purchase</option>
+                <option value="most_orders">Most Orders</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="admin-table-wrap">
+            <div id="customers-loading" class="admin-loading">Loading customers...</div>
+            <table class="admin-table admin-table--customers" id="customers-table" hidden>
+              <thead>
+                <tr>
+                  <th>Profile</th>
+                  <th>Customer Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Registered</th>
+                  <th>Orders</th>
+                  <th>Total Purchased</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="customers-tbody"></tbody>
+            </table>
+            <div id="customers-empty" class="admin-empty" hidden>
+              <p>No registered customers yet.</p>
             </div>
           </div>
         </section>
@@ -196,6 +591,133 @@
     </div>
   </div>
 
+  <!-- Order Details -->
+  <div class="modal" id="order-detail-modal" role="dialog" aria-modal="true" aria-labelledby="order-detail-heading" hidden>
+    <div class="modal__overlay" id="order-detail-overlay"></div>
+    <div class="modal__container admin-order-modal">
+      <button type="button" class="modal__close" id="order-detail-close" aria-label="Close">&times;</button>
+      <div class="admin-order-modal__body">
+        <header class="admin-order-modal__header">
+          <div>
+            <h2 id="order-detail-heading" class="admin-order-modal__title">
+              Order <span id="order-detail-number">—</span>
+            </h2>
+            <span id="order-detail-status-badge" class="admin-badge admin-badge--placed">Placed</span>
+          </div>
+          <div class="admin-order-modal__status-form">
+            <label class="admin-form__label" for="order-status-select">Update Status</label>
+            <div class="admin-order-modal__status-row">
+              <select id="order-status-select" class="admin-form__select"></select>
+              <button type="button" class="btn btn--primary btn--sm" id="order-status-save">Save</button>
+            </div>
+          </div>
+        </header>
+
+        <div class="admin-order-modal__grid">
+          <section class="admin-detail-card">
+            <h3 class="admin-detail-card__title">Customer Information</h3>
+            <div id="order-detail-customer"></div>
+            <p class="admin-detail-card__label">Phone</p>
+            <p id="order-detail-phone">—</p>
+            <p class="admin-detail-card__label">Payment Method</p>
+            <p id="order-detail-payment">—</p>
+          </section>
+
+          <section class="admin-detail-card">
+            <h3 class="admin-detail-card__title">Shipping Address</h3>
+            <div id="order-detail-shipping"></div>
+          </section>
+
+          <section class="admin-detail-card admin-detail-card--full">
+            <h3 class="admin-detail-card__title">Items</h3>
+            <div id="order-detail-items"></div>
+            <div id="order-detail-totals"></div>
+          </section>
+
+          <section class="admin-detail-card admin-detail-card--full">
+            <h3 class="admin-detail-card__title">Order Timeline</h3>
+            <div id="order-detail-timeline"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Details -->
+  <div class="modal" id="customer-detail-modal" role="dialog" aria-modal="true" aria-labelledby="customer-detail-heading" hidden>
+    <div class="modal__overlay" id="customer-detail-overlay"></div>
+    <div class="modal__container admin-order-modal">
+      <button type="button" class="modal__close" id="customer-detail-close" aria-label="Close">&times;</button>
+      <div class="admin-order-modal__body">
+        <header class="admin-order-modal__header">
+          <div class="admin-customer-hero">
+            <img id="customer-detail-avatar" class="admin-customer-avatar" src="../assets/images/products/placeholder.svg" alt="">
+            <div>
+              <h2 id="customer-detail-heading" class="admin-order-modal__title">
+                <span id="customer-detail-name">—</span>
+              </h2>
+              <span id="customer-detail-status-badge" class="admin-badge admin-badge--delivered">Active</span>
+            </div>
+          </div>
+          <div class="admin-customer-actions">
+            <button type="button" class="btn btn--secondary btn--sm" id="customer-activate-btn" hidden>Activate</button>
+            <button type="button" class="btn btn--secondary btn--sm" id="customer-block-btn">Block</button>
+            <button type="button" class="btn btn--secondary btn--sm" id="customer-unblock-btn" hidden>Unblock</button>
+            <button type="button" class="btn btn--secondary btn--sm" id="customer-delete-btn" style="color: var(--color-danger);">Delete</button>
+          </div>
+        </header>
+
+        <div class="admin-order-modal__grid">
+          <section class="admin-detail-card">
+            <h3 class="admin-detail-card__title">Profile</h3>
+            <p class="admin-detail-card__label">Email</p>
+            <p id="customer-detail-email">—</p>
+            <p class="admin-detail-card__label">Phone</p>
+            <p id="customer-detail-phone">—</p>
+            <p class="admin-detail-card__label">Email Verification</p>
+            <p id="customer-detail-verified">—</p>
+            <p class="admin-detail-card__label">Registration Date</p>
+            <p id="customer-detail-registered">—</p>
+            <p class="admin-detail-card__label">Last Login</p>
+            <p id="customer-detail-last-login">—</p>
+          </section>
+
+          <section class="admin-detail-card">
+            <h3 class="admin-detail-card__title">Address</h3>
+            <div id="customer-detail-address"></div>
+          </section>
+
+          <section class="admin-detail-card">
+            <h3 class="admin-detail-card__title">Order Summary</h3>
+            <p class="admin-detail-card__label">Total Orders</p>
+            <p id="customer-detail-orders-total">0</p>
+            <p class="admin-detail-card__label">Completed Orders</p>
+            <p id="customer-detail-orders-completed">0</p>
+            <p class="admin-detail-card__label">Cancelled Orders</p>
+            <p id="customer-detail-orders-cancelled">0</p>
+            <p class="admin-detail-card__label">Total Purchased</p>
+            <p id="customer-detail-purchased">₹0</p>
+          </section>
+
+          <section class="admin-detail-card">
+            <h3 class="admin-detail-card__title">Engagement</h3>
+            <p class="admin-detail-card__label">Wishlist Count</p>
+            <p id="customer-detail-wishlist">0</p>
+            <p class="admin-detail-card__label">Cart Items Count</p>
+            <p id="customer-detail-cart">0</p>
+            <p class="admin-detail-card__label">Recent Reviews Count</p>
+            <p id="customer-detail-reviews">0</p>
+          </section>
+
+          <section class="admin-detail-card admin-detail-card--full">
+            <h3 class="admin-detail-card__title">Order History</h3>
+            <div id="customer-detail-orders"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -206,10 +728,16 @@
   <script src="../js/data/products.js"></script>
   <script src="../js/utils/product-utils.js"></script>
   <script src="../js/modules/product-service.js"></script>
+  <script src="../js/modules/admin-order-service.js"></script>
+  <script src="../js/modules/admin-customer-service.js"></script>
+  <script src="../js/modules/admin-dashboard-service.js"></script>
   <script src="../js/modules/auth-service.js"></script>
   <script src="../js/admin/modules/admin-ui.js"></script>
   <script src="../js/admin/modules/product-list.js"></script>
   <script src="../js/admin/modules/product-form.js"></script>
+  <script src="../js/admin/modules/order-list.js"></script>
+  <script src="../js/admin/modules/customer-list.js"></script>
+  <script src="../js/admin/modules/dashboard.js"></script>
   <script src="../js/admin-app.js"></script>
 </body>
 </html>

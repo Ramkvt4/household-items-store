@@ -67,11 +67,29 @@ const App = (() => {
     const { db } = FirebaseConfig.init();
     if (!db) {
       console.error('[App] Firestore unavailable — no products loaded');
+      showCatalogUnavailable(
+        'Unable to load products right now. Please check your connection and refresh the page.'
+      );
       return;
     }
 
     ProductService.init(db);
     products = await ProductService.getAll();
+
+    if (!products.length) {
+      showCatalogUnavailable('No products are available at the moment. Please check back soon.');
+    }
+  }
+
+  function showCatalogUnavailable(message) {
+    const empty = document.getElementById('products-empty');
+    const clearBtn = document.getElementById('clear-search');
+    if (!empty) return;
+
+    const text = empty.querySelector('p');
+    if (text) text.textContent = message;
+    if (clearBtn) clearBtn.hidden = true;
+    empty.hidden = false;
   }
 
   function showLoading(show) {
@@ -151,11 +169,19 @@ const App = (() => {
   function renderProducts(productList) {
     const grid = document.getElementById('products-grid');
     const empty = document.getElementById('products-empty');
+    const clearBtn = document.getElementById('clear-search');
     if (!grid) return;
 
     if (productList.length === 0) {
       grid.innerHTML = '';
-      if (empty) empty.hidden = false;
+      if (empty) {
+        const text = empty.querySelector('p');
+        if (text && products.length > 0) {
+          text.textContent = 'No products found matching your search.';
+        }
+        if (clearBtn) clearBtn.hidden = products.length === 0;
+        empty.hidden = false;
+      }
       return;
     }
 
@@ -201,6 +227,8 @@ const App = (() => {
             width="260"
             height="260"
             loading="lazy"
+            decoding="async"
+            onerror="this.onerror=null;this.src='assets/images/products/placeholder.svg'"
           >
         </div>
         <div class="product-card__body">

@@ -16,8 +16,14 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
   signInWithEmailAndPassword,
+  signOut,
   fetchSignInMethodsForEmail,
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
+import {
+  ensureCustomerProfile,
+  assertAccountAllowed,
+} from './modules/user-profile-service.js';
 
 await initFirebaseAuth();
 
@@ -101,6 +107,8 @@ function formatLoginAuthError(error) {
     'auth/user-not-found': 'No account found with this email.',
     'auth/too-many-requests': 'Too many attempts. Please wait a moment and try again.',
     'auth/network-request-failed': 'Network error. Please check your connection and try again.',
+    'account/blocked': 'Your account has been blocked. Please contact support.',
+    'account/deleted': 'This account is no longer available.',
   };
 
   return messages[error.code] || 'Login failed. Please try again.';
@@ -204,6 +212,12 @@ async function registerUser(name, email, password) {
 
   const credential = await createUserWithEmailAndPassword(auth, email, password);
   await updateProfile(credential.user, { displayName: name });
+
+  try {
+    await ensureCustomerProfile(credential.user);
+  } catch (error) {
+    console.error('[Auth] Failed to create customer profile:', error);
+  }
 
   return credential.user;
 }
@@ -355,7 +369,22 @@ async function loginUser(email, password) {
   }
 
   const credential = await signInWithEmailAndPassword(auth, email, password);
-  return credential.user;
+  const user = credential.user;
+
+  try {
+    await assertAccountAllowed(user.uid);
+  } catch (error) {
+    await signOut(auth);
+    throw error;
+  }
+
+  try {
+    await ensureCustomerProfile(user, { recordLogin: true });
+  } catch (error) {
+    console.error('[Auth] Failed to sync customer profile:', error);
+  }
+
+  return user;
 }
 
 /**

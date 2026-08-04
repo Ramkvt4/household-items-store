@@ -337,6 +337,23 @@ address {
   min-width: 0;
 }
 
+.search-bar__input:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+  z-index: 1;
+}
+
+.search-bar__btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.header__action:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
 .search-bar__input::placeholder {
   color: var(--color-text-light);
 }

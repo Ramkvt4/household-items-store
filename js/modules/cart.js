@@ -124,6 +124,8 @@ const CartModule = (() => {
           width="64"
           height="64"
           loading="lazy"
+          decoding="async"
+          onerror="this.onerror=null;this.src='assets/images/products/placeholder.svg'"
         >
         <div class="cart-item__info">
           <p class="cart-item__name">${item.name}</p>

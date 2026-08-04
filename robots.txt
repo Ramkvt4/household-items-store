@@ -1,0 +1,25 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+
+Allow: /
+Allow: /index.html
+Allow: /login.html
+Allow: /register.html
+
+# Private / transactional pages
+Disallow: /admin/
+Disallow: /cart.html
+Disallow: /checkout.html
+Disallow: /wishlist.html
+Disallow: /profile.html
+Disallow: /saved-addresses.html
+Disallow: /my-orders.html
+Disallow: /order-details.html
+Disallow: /order-success.html
+
+# Config & internal docs (not for indexing)
+Disallow: /js/config/
+Disallow: /firebase/
+Disallow: /docs/
+
+Sitemap: https://homeappliancehub.example.com/sitemap.xml

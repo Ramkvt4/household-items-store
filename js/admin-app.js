@@ -1,6 +1,6 @@
 /**
  * Admin Dashboard Application
- * Orchestrates auth, product list, and product form modules
+ * Orchestrates auth, analytics dashboard, products, orders, and customers
  */
 
 const AdminApp = (() => {
@@ -11,6 +11,9 @@ const AdminApp = (() => {
 
     const { db, auth } = FirebaseConfig.init();
     ProductService.init(db);
+    AdminOrderService.init(db);
+    AdminCustomerService.init(db);
+    AdminDashboardService.init(db);
     AuthService.init(auth);
 
     AdminProductList.init({
@@ -24,14 +27,24 @@ const AdminApp = (() => {
       },
     });
 
+    AdminOrderList.init();
+    AdminCustomerList.init();
+    AdminDashboard.init();
+
     bindEvents();
 
     AuthService.onAuthStateChanged((user) => {
       if (user && AuthService.isAdmin(user)) {
         AdminUI.showDashboard(user);
-        AdminUI.showView('products');
+        AdminUI.showView('dashboard');
+        AdminDashboard.start();
         AdminProductList.load();
+        AdminOrderList.start();
+        AdminCustomerList.start();
       } else {
+        AdminDashboard.stop();
+        AdminOrderList.stop();
+        AdminCustomerList.stop();
         AdminUI.showLogin();
       }
     });
@@ -46,11 +59,29 @@ const AdminApp = (() => {
     document.querySelectorAll('.admin-sidebar__link[data-view]').forEach((link) => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
-        if (link.dataset.view === 'add') {
+        const view = link.dataset.view;
+
+        if (view === 'add') {
           AdminProductForm.open();
-        } else {
-          AdminUI.showView('products');
+          return;
         }
+
+        if (view === 'dashboard') {
+          AdminUI.showView('dashboard');
+          return;
+        }
+
+        if (view === 'orders') {
+          AdminUI.showView('orders');
+          return;
+        }
+
+        if (view === 'customers') {
+          AdminUI.showView('customers');
+          return;
+        }
+
+        AdminUI.showView('products');
       });
     });
 

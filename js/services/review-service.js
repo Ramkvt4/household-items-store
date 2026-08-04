@@ -21,6 +21,10 @@ import {
   getProductReviewDocRef,
 } from '../modules/firestore-service.js';
 import { getOrderTimestampMs } from '../utils/order-display.js';
+import {
+  isNetworkOrOfflineError,
+  isPermissionError,
+} from '../utils/network-error.js';
 
 /** Minimum review text length (characters). */
 export const REVIEW_TEXT_MIN_LENGTH = 10;
@@ -424,13 +428,11 @@ export function getFriendlyReviewErrorMessage(error) {
     return error.message;
   }
 
-  const message = error instanceof Error ? error.message : String(error ?? '');
-
-  if (/network|offline|unavailable|failed-precondition/i.test(message)) {
+  if (isNetworkOrOfflineError(error)) {
     return 'Unable to update your review right now. Please check your connection and try again.';
   }
 
-  if (/permission|unauthenticated|auth/i.test(message)) {
+  if (isPermissionError(error)) {
     return 'Please sign in to manage your review.';
   }
 

@@ -18,6 +18,10 @@ import {
   getUserWishlistDocRef,
 } from './firestore-service.js';
 import { getOrderTimestampMs } from '../utils/order-display.js';
+import {
+  isNetworkOrOfflineError,
+  isPermissionError,
+} from '../utils/network-error.js';
 
 /**
  * Build the product snapshot stored on a wishlist document.
@@ -206,13 +210,11 @@ export async function toggleWishlist(userId, product) {
  * @returns {string}
  */
 export function getFriendlyWishlistErrorMessage(error) {
-  const message = error instanceof Error ? error.message : String(error ?? '');
-
-  if (/network|offline|unavailable|failed-precondition/i.test(message)) {
+  if (isNetworkOrOfflineError(error)) {
     return 'Unable to update wishlist right now. Please check your connection and try again.';
   }
 
-  if (/permission|unauthenticated|auth/i.test(message)) {
+  if (isPermissionError(error)) {
     return 'Please sign in to manage your wishlist.';
   }
 

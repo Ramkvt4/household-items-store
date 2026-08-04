@@ -134,6 +134,9 @@ function createCartItemHtml(item) {
           alt="${escapeHtml(item.name)}"
           width="120"
           height="120"
+          loading="lazy"
+          decoding="async"
+          onerror="this.onerror=null;this.src='assets/images/products/placeholder.svg'"
         >
       </a>
 

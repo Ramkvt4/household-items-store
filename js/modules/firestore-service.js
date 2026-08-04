@@ -51,7 +51,6 @@ export async function initFirestore() {
     const app = getFirebaseApp();
     db = getFirestore(app);
     initialized = true;
-    console.log('[Firestore] Initialized successfully');
     return db;
   } catch (error) {
     console.error('[Firestore] Initialization failed:', error);
@@ -89,7 +88,6 @@ export async function verifyFirestoreConnection() {
     return null;
   }
 
-  console.log('[Firestore] Verified — ready for customer cart storage');
   return firestore;
 }
 

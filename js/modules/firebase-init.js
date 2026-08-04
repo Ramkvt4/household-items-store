@@ -53,7 +53,6 @@ export async function initFirebaseAuth() {
     await setPersistence(auth, browserLocalPersistence);
 
     initialized = true;
-    console.log('[Firebase Auth] Initialized successfully (Email/Password)');
     return auth;
   } catch (error) {
     console.error('[Firebase Auth] Initialization failed:', error);

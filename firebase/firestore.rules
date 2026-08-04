@@ -3,6 +3,22 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Keep in sync with FirebaseConfig.adminEmails (+ optional admins/{email} docs)
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email in ['jioraichu@gmail.com']
+        || exists(/databases/$(database)/documents/admins/$(request.auth.token.email))
+      );
+    }
+
+    function isOrderOwner() {
+      return isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
     // Products — public read, authenticated write (admin login required)
     match /products/{productId} {
       allow read: if true;
@@ -22,31 +38,59 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Customer shopping carts — owner read/write only (Module 7)
+    // Customer shopping carts — owner read/write; admin read for Customer Management
     match /carts/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if (request.auth != null && request.auth.uid == userId) || isAdmin();
+      allow write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Customer orders — create own orders; read own orders (Module 8)
+    // Customer orders — create own; read own or admin; admin status updates (Module 13)
     match /orders/{orderId} {
-      allow read: if request.auth != null
-        && resource.data.userId == request.auth.uid;
+      allow read: if isOrderOwner() || isAdmin();
+
       allow create: if request.resource.data.orderNumber is string
         && request.resource.data.orderStatus == 'placed'
         && (
           request.resource.data.userId == null
           || (request.auth != null && request.resource.data.userId == request.auth.uid)
         );
-      allow update, delete: if false;
+
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['orderStatus', 'updatedAt', 'statusHistory', 'paymentStatus'])
+        && request.resource.data.orderStatus in [
+          'placed', 'confirmed', 'packed', 'shipped',
+          'out_for_delivery', 'delivered', 'cancelled'
+        ];
+
+      allow delete: if false;
     }
 
-    // Customer profiles — saved address (Module 8)
-    // Wishlist subcollection — owner read/write only (Module 10)
+    // Customer profiles — owner address/profile; admin status management (Module 13)
+    // Wishlist subcollection — owner write; owner or admin read
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if (isSignedIn() && request.auth.uid == userId) || isAdmin();
+
+      allow create: if isSignedIn()
+        && request.auth.uid == userId
+        && request.resource.data.accountStatus == 'active';
+
+      allow update: if (
+          isSignedIn()
+          && request.auth.uid == userId
+          && request.resource.data.get('accountStatus', 'active')
+            == resource.data.get('accountStatus', 'active')
+        )
+        || (
+          isAdmin()
+          && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['accountStatus', 'updatedAt', 'statusUpdatedAt', 'statusUpdatedBy'])
+          && request.resource.data.accountStatus in ['active', 'blocked', 'deleted']
+        );
 
       match /wishlist/{productId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow read: if (isSignedIn() && request.auth.uid == userId) || isAdmin();
+        allow write: if isSignedIn() && request.auth.uid == userId;
       }
     }
 
