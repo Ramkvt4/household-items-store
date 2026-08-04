@@ -33,6 +33,7 @@ const FirebaseConfig = {
     carts: 'carts',
     users: 'users',
     coupons: 'coupons',
+    reviews: 'reviews',
   },
 
   storagePaths: {

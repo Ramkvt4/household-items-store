@@ -128,6 +128,123 @@
     </div>
   </main>
 
+  <!-- Write Review Modal (Module 12 Phase 4) -->
+  <div
+    class="modal write-review-modal"
+    id="write-review-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="write-review-title"
+    hidden
+  >
+    <div class="modal__overlay" id="write-review-overlay"></div>
+    <div class="modal__container write-review-modal__container">
+      <button
+        type="button"
+        class="modal__close"
+        id="write-review-close"
+        aria-label="Close write review"
+      >
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <div class="write-review-modal__body">
+        <h2 class="write-review-modal__title" id="write-review-title">Write a Review</h2>
+
+        <div class="write-review-modal__product">
+          <img
+            class="write-review-modal__product-image"
+            id="write-review-product-image"
+            src="assets/images/products/placeholder.svg"
+            alt=""
+            width="72"
+            height="72"
+          >
+          <p class="write-review-modal__product-name" id="write-review-product-name">Product</p>
+        </div>
+
+        <form class="write-review-modal__form" id="write-review-form" novalidate>
+          <div class="write-review-modal__field">
+            <span class="write-review-modal__label" id="write-review-rating-label">Your rating</span>
+            <div
+              class="write-review-modal__stars"
+              id="write-review-stars"
+              role="radiogroup"
+              aria-labelledby="write-review-rating-label"
+            >
+              <button type="button" class="write-review-modal__star" data-rating="1" role="radio" aria-checked="false" aria-label="1 star">★</button>
+              <button type="button" class="write-review-modal__star" data-rating="2" role="radio" aria-checked="false" aria-label="2 stars">★</button>
+              <button type="button" class="write-review-modal__star" data-rating="3" role="radio" aria-checked="false" aria-label="3 stars">★</button>
+              <button type="button" class="write-review-modal__star" data-rating="4" role="radio" aria-checked="false" aria-label="4 stars">★</button>
+              <button type="button" class="write-review-modal__star" data-rating="5" role="radio" aria-checked="false" aria-label="5 stars">★</button>
+            </div>
+          </div>
+
+          <div class="write-review-modal__field">
+            <label class="write-review-modal__label" for="write-review-text">Your review</label>
+            <textarea
+              id="write-review-text"
+              class="write-review-modal__textarea"
+              rows="5"
+              maxlength="1000"
+              placeholder="Write your review..."
+              required
+            ></textarea>
+            <div class="write-review-modal__meta-row">
+              <span class="write-review-modal__hint">Minimum 10 characters</span>
+              <span class="write-review-modal__counter" id="write-review-counter">0 / 1000</span>
+            </div>
+          </div>
+
+          <p class="write-review-modal__error" id="write-review-error" hidden></p>
+
+          <div class="write-review-modal__actions">
+            <button type="button" class="btn btn--secondary" id="write-review-cancel">Cancel</button>
+            <button type="submit" class="btn btn--accent" id="write-review-submit">Submit Review</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Review Confirmation (Module 12 Phase 6) -->
+  <div
+    class="modal delete-review-modal"
+    id="delete-review-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="delete-review-title"
+    aria-describedby="delete-review-message"
+    hidden
+  >
+    <div class="modal__overlay" id="delete-review-overlay"></div>
+    <div class="modal__container delete-review-modal__container">
+      <button
+        type="button"
+        class="modal__close"
+        id="delete-review-close"
+        aria-label="Close delete review dialog"
+      >
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <div class="delete-review-modal__body">
+        <h2 class="delete-review-modal__title" id="delete-review-title">Delete Review?</h2>
+        <p class="delete-review-modal__message" id="delete-review-message">
+          This action cannot be undone.
+        </p>
+        <div class="delete-review-modal__actions">
+          <button type="button" class="btn btn--secondary" id="delete-review-cancel">Cancel</button>
+          <button type="button" class="btn btn--danger" id="delete-review-confirm">Delete Review</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <footer class="footer" id="footer" role="contentinfo">
     <div class="container footer__grid">
       <div class="footer__brand">

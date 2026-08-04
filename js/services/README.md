@@ -25,6 +25,10 @@ gradually in Modules 11–13.
 | Wishlist Integration | `js/modules/wishlist-integration.js` | Product-card heart toggle UI |
 | Coupon Service | `js/services/coupon-service.js` | Coupon fetch, validation, discount calculation (Module 11 Phase 1) |
 | Cart Coupon | `js/modules/cart-coupon.js` | Applied-coupon localStorage persistence + cart/checkout totals (Module 11 Phase 2) |
+| Review Service | `js/services/review-service.js` | Product reviews CRUD + realtime subscription (Module 12 Phase 1) |
+| Product Reviews UI | `js/modules/product-reviews-ui.js` | Product details read-only reviews display (Module 12) |
+| Write Review Modal | `js/modules/write-review-modal.js` | Create + edit reviews from My Orders (Module 12 Phase 4–5) |
+| Delete Review Modal | `js/modules/delete-review-modal.js` | Confirm + delete reviews from My Orders (Module 12 Phase 6) |
 
 ---
 
@@ -34,7 +38,6 @@ These modules are **not implemented** yet. Names are reserved for upcoming work:
 
 | Service | Planned responsibility |
 |---------|------------------------|
-| Review Service | Product reviews and ratings persistence |
 | Admin Service | Consolidated admin operations beyond product CRUD |
 | Notification Service | Order/status customer notifications (optional) |
 | Inventory Service | Stock reservation and low-stock handling (optional) |

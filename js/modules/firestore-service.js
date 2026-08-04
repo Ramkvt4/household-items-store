@@ -181,4 +181,60 @@ export function getUserWishlistDocRef(userId, productId) {
   );
 }
 
+/** Review items subcollection under reviews/{productId} (Module 12). */
+export const REVIEW_ITEMS_SUBCOLLECTION = 'items';
+
+/**
+ * Collection reference for a product's reviews.
+ * Path: reviews/{productId}/items
+ * @param {string} productId
+ * @returns {import('firebase/firestore').CollectionReference}
+ */
+export function getProductReviewsCollectionRef(productId) {
+  if (!productId) {
+    throw new Error('[Firestore] productId is required for reviews collection reference');
+  }
+
+  if (!db) {
+    throw new Error('[Firestore] Not initialized. Call initFirestore() first.');
+  }
+
+  return collection(
+    db,
+    firebaseCollections.reviews,
+    productId,
+    REVIEW_ITEMS_SUBCOLLECTION,
+  );
+}
+
+/**
+ * Document reference for a product review.
+ * Path: reviews/{productId}/items/{reviewId}
+ * Document ID is the author's Firebase Auth UID (one review per user).
+ * @param {string} productId
+ * @param {string} reviewId - Firebase Auth UID
+ * @returns {import('firebase/firestore').DocumentReference}
+ */
+export function getProductReviewDocRef(productId, reviewId) {
+  if (!productId) {
+    throw new Error('[Firestore] productId is required for review document reference');
+  }
+
+  if (!reviewId) {
+    throw new Error('[Firestore] reviewId is required for review document reference');
+  }
+
+  if (!db) {
+    throw new Error('[Firestore] Not initialized. Call initFirestore() first.');
+  }
+
+  return doc(
+    db,
+    firebaseCollections.reviews,
+    productId,
+    REVIEW_ITEMS_SUBCOLLECTION,
+    reviewId,
+  );
+}
+
 export { firebaseCollections as FIRESTORE_COLLECTIONS, isFirebaseConfigured };

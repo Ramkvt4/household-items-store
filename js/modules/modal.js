@@ -9,6 +9,17 @@ const ModalModule = (() => {
   let closeBtn = null;
   let contentEl = null;
   let previouslyFocused = null;
+  /** @type {string | null} */
+  let activeProductId = null;
+  /** @type {null | typeof import('./product-reviews-ui.js')} */
+  let ProductReviewsUI = null;
+
+  async function loadProductReviewsUI() {
+    if (!ProductReviewsUI) {
+      ProductReviewsUI = await import('./product-reviews-ui.js');
+    }
+    return ProductReviewsUI;
+  }
 
   function init() {
     modal = document.getElementById('product-modal');
@@ -34,6 +45,7 @@ const ModalModule = (() => {
     if (!modal || !contentEl) return;
 
     previouslyFocused = document.activeElement;
+    activeProductId = product?.id ?? null;
 
     const stars = renderStars(product.rating);
     const discount = product.discount || (product.originalPrice
@@ -88,6 +100,7 @@ const ModalModule = (() => {
           ${discount > 0 ? `<span class="product-card__price-off">${discount}% off</span>` : ''}
         </div>
         <p class="modal__desc">${product.description || ''}</p>
+        <div class="modal__reviews" id="modal-reviews-root"></div>
         ${specsHtml ? `
           <div class="modal__specs">
             <h3 class="modal__specs-title">Specifications</h3>
@@ -126,6 +139,19 @@ const ModalModule = (() => {
       cart.handleAddToCart(product);
     });
 
+    const reviewsRoot = contentEl.querySelector('#modal-reviews-root');
+    const productId = product.id;
+    loadProductReviewsUI()
+      .then((ui) => {
+        if (activeProductId !== productId || !reviewsRoot?.isConnected) return;
+        reviewsRoot.innerHTML = ui.getProductReviewsSectionHtml();
+        const section = reviewsRoot.querySelector('#product-reviews');
+        return ui.mountProductReviews(section, productId);
+      })
+      .catch((error) => {
+        console.error('[Modal] Failed to load product reviews UI:', error);
+      });
+
     modal.hidden = false;
     document.body.style.overflow = 'hidden';
     closeBtn?.focus();
@@ -133,6 +159,17 @@ const ModalModule = (() => {
 
   function close() {
     if (!modal) return;
+
+    activeProductId = null;
+
+    if (ProductReviewsUI) {
+      ProductReviewsUI.unmountProductReviews();
+    } else {
+      loadProductReviewsUI()
+        .then((ui) => ui.unmountProductReviews())
+        .catch(() => {});
+    }
+
     modal.hidden = true;
     document.body.style.overflow = '';
     previouslyFocused?.focus();

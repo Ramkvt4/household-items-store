@@ -1253,6 +1253,129 @@ address {
   margin-bottom: 1.5rem;
 }
 
+/* --- Product Reviews (Module 12 Phase 2) --- */
+.modal__reviews {
+  margin-bottom: 1.5rem;
+}
+
+.product-reviews {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  width: 100%;
+}
+
+.product-reviews__title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-secondary);
+  margin: 0;
+}
+
+.product-reviews__summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.product-reviews__summary-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.product-reviews__average {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-secondary);
+}
+
+.product-reviews__count {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.product-reviews__loading {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.product-reviews__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.product-reviews__card {
+  padding: 0.875rem 1rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.product-reviews__card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.375rem;
+}
+
+.product-reviews__date {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-light);
+  white-space: nowrap;
+}
+
+.product-reviews__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.375rem 0.625rem;
+  margin-bottom: 0.5rem;
+}
+
+.product-reviews__author {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.product-reviews__verified {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-success-dark);
+  background: rgba(37, 211, 102, 0.12);
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.product-reviews__text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.product-reviews__empty {
+  padding: 1rem;
+  text-align: center;
+  background: var(--color-bg);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.product-reviews__empty p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
 .modal__specs {
   margin-bottom: 1.5rem;
 }

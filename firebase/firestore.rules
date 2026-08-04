@@ -55,5 +55,47 @@ service cloud.firestore {
       allow read: if true;
       allow create, update, delete: if request.auth != null;
     }
+
+    // Product reviews — public read; owner create/update/delete (Module 12)
+    // Path: reviews/{productId}/items/{reviewId}
+    // Document ID must equal the author's auth uid (one review per user).
+    match /reviews/{productId}/items/{reviewId} {
+      allow read: if true;
+
+      allow create: if request.auth != null
+        && request.auth.uid == reviewId
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.userName is string
+        && request.resource.data.userName.size() > 0
+        && request.resource.data.rating is int
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5
+        && request.resource.data.review is string
+        && request.resource.data.review.size() >= 10
+        && request.resource.data.review.size() <= 1000
+        && request.resource.data.verifiedPurchase is bool
+        && request.resource.data.keys().hasAll([
+          'userId', 'userName', 'rating', 'review',
+          'createdAt', 'updatedAt', 'verifiedPurchase'
+        ]);
+
+      allow update: if request.auth != null
+        && request.auth.uid == reviewId
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.userName == resource.data.userName
+        && request.resource.data.verifiedPurchase == resource.data.verifiedPurchase
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.rating is int
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5
+        && request.resource.data.review is string
+        && request.resource.data.review.size() >= 10
+        && request.resource.data.review.size() <= 1000;
+
+      allow delete: if request.auth != null
+        && request.auth.uid == reviewId
+        && resource.data.userId == request.auth.uid;
+    }
   }
 }
