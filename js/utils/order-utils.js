@@ -81,6 +81,9 @@ export function snapshotCartItems(cart) {
  */
 export function buildOrderPayload({ formData, cart, summary, userId }) {
   const paymentMethod = String(formData.paymentMethod ?? 'cod');
+  const couponCode = summary.couponCode
+    ? String(summary.couponCode).trim().toUpperCase()
+    : null;
 
   return {
     orderNumber: generateOrderNumber(),
@@ -89,9 +92,10 @@ export function buildOrderPayload({ formData, cart, summary, userId }) {
     shippingAddress: buildShippingAddressFromForm(formData),
     items: snapshotCartItems(cart),
     subtotal: summary.subtotal,
-    discount: summary.discount,
+    discount: Number(summary.discount) || 0,
     delivery: summary.delivery,
     grandTotal: summary.grandTotal,
+    couponCode,
     paymentMethod,
     paymentStatus: paymentMethod === 'cod' ? 'pending' : 'pending',
     orderStatus: 'placed',

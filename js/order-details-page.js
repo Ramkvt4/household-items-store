@@ -188,22 +188,35 @@ function renderOrderDetails(order) {
   if (totalsEl) {
     const delivery = Number(order.delivery) || 0;
     const discount = Number(order.discount) || 0;
+    const couponCode = order.couponCode
+      ? String(order.couponCode).trim().toUpperCase()
+      : '';
+    const hasCoupon = Boolean(couponCode) || discount > 0;
 
-    totalsEl.innerHTML = `
+    const couponSection = hasCoupon
+      ? `
       <div class="order-detail-rows__row">
-        <dt class="order-detail-rows__label">Subtotal</dt>
-        <dd class="order-detail-rows__value">₹${escapeHtml(formatOrderAmount(order.subtotal ?? 0))}</dd>
+        <dt class="order-detail-rows__label">Coupon Applied</dt>
+        <dd class="order-detail-rows__value">${couponCode ? escapeHtml(couponCode) : '—'}</dd>
       </div>
       <div class="order-detail-rows__row">
         <dt class="order-detail-rows__label">Discount</dt>
         <dd class="order-detail-rows__value">${discount > 0 ? `− ₹${escapeHtml(formatOrderAmount(discount))}` : '₹0'}</dd>
+      </div>`
+      : '';
+
+    totalsEl.innerHTML = `
+      <div class="order-detail-rows__row">
+        <dt class="order-detail-rows__label">Original Subtotal</dt>
+        <dd class="order-detail-rows__value">₹${escapeHtml(formatOrderAmount(order.subtotal ?? 0))}</dd>
       </div>
+      ${couponSection}
       <div class="order-detail-rows__row">
         <dt class="order-detail-rows__label">Delivery</dt>
         <dd class="order-detail-rows__value">${delivery > 0 ? `₹${escapeHtml(formatOrderAmount(delivery))}` : 'Free'}</dd>
       </div>
       <div class="order-detail-rows__row">
-        <dt class="order-detail-rows__label">Grand Total</dt>
+        <dt class="order-detail-rows__label">Final Grand Total</dt>
         <dd class="order-detail-rows__value order-detail-rows__value--highlight">₹${escapeHtml(formatOrderAmount(order.grandTotal ?? 0))}</dd>
       </div>`;
   }

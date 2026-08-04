@@ -1,16 +1,16 @@
 /**
  * Cart Page — Dynamic rendering (Module 5.4–5.6, Module 7 Phase 2–5)
+ * Coupon UI & totals (Module 11 Phase 2).
  * Reads and updates cart data via cart-service.js (localStorage or Firestore).
  */
 
 import {
   getCart,
   getCartCount,
-  getCartTotal,
-  updateQuantity,
-  removeFromCart,
   initCartService,
   isCartLoading,
+  updateQuantity,
+  removeFromCart,
   CART_UPDATED_EVENT,
   CART_LOADING_EVENT,
 } from './modules/cart-service.js';
@@ -20,6 +20,16 @@ import {
   withCartControl,
   initCartUi,
 } from './modules/cart-ui.js';
+import {
+  applyCouponToCart,
+  removeAppliedCoupon,
+  getAppliedCoupon,
+  revalidateAppliedCoupon,
+  clearAppliedCouponIfCartEmpty,
+  syncAppliedCouponWithSubtotal,
+  CART_COUPON_UPDATED_EVENT,
+} from './modules/cart-coupon.js';
+import { getOrderSummary, formatOrderAmount } from './utils/order-summary.js';
 
 /** @type {HTMLElement | null} */
 let loadingElement = null;
@@ -30,7 +40,7 @@ let loadingElement = null;
  * @returns {string}
  */
 function formatPrice(price) {
-  return Number(price).toLocaleString('en-IN');
+  return formatOrderAmount(price);
 }
 
 /**
@@ -181,14 +191,100 @@ function updateHeaderBadge(count) {
 }
 
 /**
- * Render the order summary totals.
- * @param {number} total
+ * Set coupon card visual/message state.
+ * @param {'idle'|'success'|'error'} state
+ * @param {string} [message]
  */
-function renderOrderSummary(total) {
-  const formatted = `₹${formatPrice(total)}`;
+function setCouponUiState(state, message = '') {
+  const card = document.getElementById('cart-coupon');
+  const messageEl = document.getElementById('coupon-message');
 
-  document.getElementById('summary-items-total').textContent = formatted;
-  document.getElementById('summary-grand-total').textContent = formatted;
+  if (card) {
+    card.dataset.state = state;
+  }
+
+  if (!messageEl) return;
+
+  if (!message) {
+    messageEl.hidden = true;
+    messageEl.textContent = '';
+    messageEl.className = 'cart-coupon__message';
+    return;
+  }
+
+  messageEl.hidden = false;
+  messageEl.textContent = message;
+  messageEl.className = `cart-coupon__message cart-coupon__message--${
+    state === 'success' ? 'success' : 'error'
+  }`;
+}
+
+/**
+ * Render the coupon section from persisted applied coupon.
+ * @param {{ keepMessage?: boolean }} [options]
+ */
+function renderCouponSection(options = {}) {
+  const applied = getAppliedCoupon();
+  const card = document.getElementById('cart-coupon');
+  const form = document.getElementById('cart-coupon-form');
+  const appliedEl = document.getElementById('coupon-applied');
+  const codeEl = document.getElementById('coupon-applied-code');
+  const discountEl = document.getElementById('coupon-applied-discount');
+  const input = document.getElementById('coupon-code-input');
+
+  if (applied) {
+    if (form) form.hidden = true;
+    if (appliedEl) appliedEl.hidden = false;
+    if (codeEl) codeEl.textContent = applied.code;
+    if (discountEl) {
+      discountEl.textContent = `You save ₹${formatPrice(applied.discount)}`;
+    }
+    if (input) input.value = applied.code;
+
+    if (!options.keepMessage) {
+      setCouponUiState('success');
+    } else if (card) {
+      card.dataset.state = 'success';
+    }
+    return;
+  }
+
+  if (form) form.hidden = false;
+  if (appliedEl) appliedEl.hidden = true;
+  if (codeEl) codeEl.textContent = '';
+  if (discountEl) discountEl.textContent = '';
+
+  // Keep an explicit apply-error message; otherwise reset (e.g. auto-cleared coupon).
+  if (options.keepMessage && card?.dataset.state === 'error') {
+    return;
+  }
+
+  setCouponUiState('idle');
+}
+
+/**
+ * Render the order summary totals (subtotal, discount, grand total).
+ */
+function renderOrderSummary() {
+  const summary = getOrderSummary();
+
+  const itemsTotalEl = document.getElementById('summary-items-total');
+  const discountEl = document.getElementById('summary-discount');
+  const grandTotalEl = document.getElementById('summary-grand-total');
+
+  if (itemsTotalEl) {
+    itemsTotalEl.textContent = `₹${formatPrice(summary.subtotal)}`;
+  }
+
+  if (discountEl) {
+    discountEl.textContent = summary.discount > 0
+      ? `− ₹${formatPrice(summary.discount)}`
+      : '− ₹0';
+  }
+
+  if (grandTotalEl) {
+    grandTotalEl.textContent = `₹${formatPrice(summary.grandTotal)}`;
+  }
 }
 
 /**
@@ -203,7 +299,6 @@ function renderFilledCart(cart) {
   const loader = loadingElement ?? document.getElementById('cart-loading');
 
   const count = getCartCount();
-  const total = getCartTotal();
 
   if (loader) loader.hidden = true;
   if (emptyState) {
@@ -226,7 +321,9 @@ function renderFilledCart(cart) {
     itemsList.innerHTML = cart.map(createCartItemHtml).join('');
   }
 
-  renderOrderSummary(total);
+  syncAppliedCouponWithSubtotal();
+  renderCouponSection({ keepMessage: true });
+  renderOrderSummary();
   updateHeaderBadge(count);
 }
 
@@ -239,6 +336,8 @@ function renderEmptyCart() {
   const itemsList = document.getElementById('cart-items-list');
   const subtitle = document.getElementById('cart-page-subtitle');
   const loader = loadingElement ?? document.getElementById('cart-loading');
+
+  clearAppliedCouponIfCartEmpty(0);
 
   if (loader) loader.hidden = true;
   if (itemsList) itemsList.innerHTML = '';
@@ -258,7 +357,8 @@ function renderEmptyCart() {
     emptyState.removeAttribute('hidden');
   }
 
-  renderOrderSummary(0);
+  renderCouponSection();
+  renderOrderSummary();
   updateHeaderBadge(0);
 }
 
@@ -317,7 +417,68 @@ async function handleRemove(productId) {
 }
 
 /**
+ * Apply coupon from the form input.
+ * @param {HTMLButtonElement} button
+ */
+async function handleApplyCoupon(button) {
+  const input = document.getElementById('coupon-code-input');
+  const code = input?.value?.trim() ?? '';
+
+  if (!code) {
+    setCouponUiState('error', 'Please enter a coupon code.');
+    showCartToast('Please enter a coupon code.', 'error');
+    input?.focus();
+    return;
+  }
+
+  try {
+    await withCartControl(button, async () => {
+      const result = await applyCouponToCart(code);
+
+      if (!result.ok) {
+        setCouponUiState('error', result.message);
+        showCartToast(result.message, 'error');
+        return;
+      }
+
+      renderCouponSection();
+      setCouponUiState('success', result.message);
+      renderOrderSummary();
+      showCartToast(result.message || 'Coupon Applied', 'success');
+    });
+  } catch (error) {
+    const message = getFriendlyCartErrorMessage(error);
+    setCouponUiState('error', message);
+    showCartToast(message, 'error');
+  }
+}
+
+/**
+ * Remove the applied coupon and reset totals.
+ * @param {HTMLButtonElement} button
+ */
+async function handleRemoveCoupon(button) {
+  try {
+    await withCartControl(button, async () => {
+      const removed = removeAppliedCoupon();
+      if (!removed) return;
+
+      const input = document.getElementById('coupon-code-input');
+      if (input) input.value = '';
+
+      renderCouponSection();
+      setCouponUiState('idle');
+      renderOrderSummary();
+      showCartToast('Coupon Removed', 'success');
+    });
+  } catch (error) {
+    showCartToast(getFriendlyCartErrorMessage(error), 'error');
+  }
+}
+
+/**
  * Handle Proceed to Checkout — navigate to checkout page.
+ * Coupon code, discount, and final total persist via cart-coupon + order-summary.
  */
 function handleCheckout() {
   const cart = getCart();
@@ -327,7 +488,34 @@ function handleCheckout() {
     return;
   }
 
+  syncAppliedCouponWithSubtotal();
   window.location.href = 'checkout.html';
+}
+
+/**
+ * Bind coupon form apply / remove handlers.
+ */
+function bindCouponEvents() {
+  const form = document.getElementById('cart-coupon-form');
+  const removeBtn = document.getElementById('coupon-remove-btn');
+
+  if (form && form.dataset.eventsBound !== 'true') {
+    form.dataset.eventsBound = 'true';
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const applyBtn = document.getElementById('coupon-apply-btn');
+      if (!(applyBtn instanceof HTMLButtonElement) || applyBtn.disabled) return;
+      handleApplyCoupon(applyBtn);
+    });
+  }
+
+  if (removeBtn && removeBtn.dataset.eventsBound !== 'true') {
+    removeBtn.dataset.eventsBound = 'true';
+    removeBtn.addEventListener('click', () => {
+      if (removeBtn.disabled) return;
+      handleRemoveCoupon(removeBtn);
+    });
+  }
 }
 
 /**
@@ -392,13 +580,25 @@ function bindCartItemEvents() {
 document.addEventListener('DOMContentLoaded', async () => {
   initCartUi();
   bindCartItemEvents();
+  bindCouponEvents();
   bindCheckoutEvent();
 
   setPageLoading(true);
 
   await initCartService();
+
+  try {
+    await revalidateAppliedCoupon();
+  } catch (error) {
+    console.warn('[Cart] Coupon revalidation skipped:', error);
+  }
+
   renderCartPage();
 
   document.addEventListener(CART_UPDATED_EVENT, renderCartPage);
   document.addEventListener(CART_LOADING_EVENT, renderCartPage);
+  document.addEventListener(CART_COUPON_UPDATED_EVENT, () => {
+    renderCouponSection({ keepMessage: true });
+    renderOrderSummary();
+  });
 });

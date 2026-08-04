@@ -24,6 +24,7 @@ import { buildOrderPayload, buildShippingAddressFromForm, getPaymentMethodLabel 
 import { createOrder, getFriendlyOrderErrorMessage } from './modules/order-service.js';
 import { getSavedAddress, saveUserAddress } from './modules/user-profile-service.js';
 import { storeLastOrder } from './utils/order-session.js';
+import { removeAppliedCoupon } from './modules/cart-coupon.js';
 
 /** @type {import('firebase/auth').User | null} */
 let currentUser = null;
@@ -85,25 +86,40 @@ function setPageState(state) {
 }
 
 /**
- * Render order summary totals from cart-service via order-summary utility.
+ * Render order summary totals from cart coupon snapshot (no re-validation).
  */
 function renderOrderSummary() {
   const summary = getOrderSummary();
   const countEl = document.getElementById('summary-product-count');
   const subtotalEl = document.getElementById('summary-subtotal');
+  const couponRow = document.getElementById('summary-coupon-row');
+  const couponCodeEl = document.getElementById('summary-coupon-code');
   const discountEl = document.getElementById('summary-discount');
   const deliveryEl = document.getElementById('summary-delivery');
   const grandTotalEl = document.getElementById('summary-grand-total');
 
   const countLabel = `${summary.productCount} item${summary.productCount !== 1 ? 's' : ''}`;
+  const hasCoupon = Boolean(summary.couponCode);
 
   if (countEl) countEl.textContent = countLabel;
   if (subtotalEl) subtotalEl.textContent = `₹${formatOrderAmount(summary.subtotal)}`;
+
+  if (couponRow && couponCodeEl) {
+    if (hasCoupon) {
+      couponRow.hidden = false;
+      couponCodeEl.textContent = summary.couponCode;
+    } else {
+      couponRow.hidden = true;
+      couponCodeEl.textContent = '—';
+    }
+  }
+
   if (discountEl) {
     discountEl.textContent = summary.discount > 0
       ? `− ₹${formatOrderAmount(summary.discount)}`
       : '− ₹0';
   }
+
   if (deliveryEl) {
     deliveryEl.textContent = summary.isFreeDelivery ? 'Free' : `₹${formatOrderAmount(summary.delivery)}`;
   }
@@ -335,6 +351,7 @@ async function handlePlaceOrder(event) {
       }
 
       await clearCart();
+      removeAppliedCoupon();
       updateHeaderBadge(0);
 
       storeLastOrder({
@@ -344,6 +361,9 @@ async function handlePlaceOrder(event) {
         paymentStatus: orderPayload.paymentStatus,
         orderStatus: orderPayload.orderStatus,
         grandTotal: orderPayload.grandTotal,
+        couponCode: summary.couponCode ?? null,
+        discount: summary.discount,
+        finalTotal: summary.finalTotal ?? summary.grandTotal,
       });
 
       window.location.href = 'order-success.html';

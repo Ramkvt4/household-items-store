@@ -1,34 +1,41 @@
 /**
  * Order Summary — shared cart totals for checkout and cart pages.
- * Uses cart-service calculations; does not duplicate pricing logic.
+ * Reads the already-applied coupon from cart-coupon (validated in Cart).
+ * Does not re-validate or recalculate discounts.
  */
 
 import { getCartCount, getCartTotal } from '../modules/cart-service.js';
+import { getAppliedCoupon } from '../modules/cart-coupon.js';
 
 /**
- * Build order summary totals from the current cart.
- * Discount and delivery match the cart page (no discount, free delivery).
+ * Build order summary totals from the current cart + applied coupon snapshot.
  * @returns {{
  *   productCount: number,
  *   subtotal: number,
  *   discount: number,
  *   delivery: number,
  *   grandTotal: number,
- *   isFreeDelivery: boolean
+ *   finalTotal: number,
+ *   isFreeDelivery: boolean,
+ *   couponCode: string|null
  * }}
  */
 export function getOrderSummary() {
   const subtotal = getCartTotal();
-  const discount = 0;
+  const applied = getAppliedCoupon();
+  const discount = applied ? Number(applied.discount) || 0 : 0;
   const delivery = 0;
+  const grandTotal = Math.max(0, subtotal - discount + delivery);
 
   return {
     productCount: getCartCount(),
     subtotal,
     discount,
     delivery,
-    grandTotal: subtotal - discount + delivery,
+    grandTotal,
+    finalTotal: grandTotal,
     isFreeDelivery: true,
+    couponCode: applied?.code ?? null,
   };
 }
 

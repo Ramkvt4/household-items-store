@@ -24,6 +24,7 @@ gradually in Modules 11–13.
 | Wishlist Service | `js/modules/wishlist-service.js` | Wishlist CRUD + realtime subscription |
 | Wishlist Integration | `js/modules/wishlist-integration.js` | Product-card heart toggle UI |
 | Coupon Service | `js/services/coupon-service.js` | Coupon fetch, validation, discount calculation (Module 11 Phase 1) |
+| Cart Coupon | `js/modules/cart-coupon.js` | Applied-coupon localStorage persistence + cart/checkout totals (Module 11 Phase 2) |
 
 ---
 

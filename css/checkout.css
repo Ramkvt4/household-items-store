@@ -254,6 +254,16 @@
   color: var(--color-success-dark);
 }
 
+.checkout-summary__coupon {
+  color: var(--color-success-dark);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.checkout-summary__row[hidden] {
+  display: none !important;
+}
+
 .checkout-summary__free {
   color: var(--color-success-dark);
   font-weight: 600;

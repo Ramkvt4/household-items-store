@@ -129,6 +129,47 @@
 
           <div id="cart-items-list"></div>
 
+          <!-- Coupon (Module 11 Phase 2) -->
+          <section
+            class="cart-coupon"
+            id="cart-coupon"
+            aria-labelledby="cart-coupon-heading"
+            data-state="idle"
+          >
+            <h2 id="cart-coupon-heading" class="cart-coupon__title">Have a coupon?</h2>
+            <p class="cart-coupon__hint">Enter your code below to apply a discount.</p>
+
+            <form class="cart-coupon__form" id="cart-coupon-form" novalidate>
+              <label for="coupon-code-input" class="visually-hidden">Coupon code</label>
+              <input
+                type="text"
+                id="coupon-code-input"
+                class="cart-coupon__input"
+                name="couponCode"
+                placeholder="Enter coupon code"
+                autocomplete="off"
+                spellcheck="false"
+                maxlength="40"
+              >
+              <button type="submit" class="btn btn--accent cart-coupon__apply" id="coupon-apply-btn">
+                Apply
+              </button>
+            </form>
+
+            <p class="cart-coupon__message" id="coupon-message" role="status" aria-live="polite" hidden></p>
+
+            <div class="cart-coupon__applied" id="coupon-applied" hidden>
+              <div class="cart-coupon__applied-info">
+                <span class="cart-coupon__applied-label">Applied Coupon</span>
+                <strong class="cart-coupon__code" id="coupon-applied-code"></strong>
+                <span class="cart-coupon__discount" id="coupon-applied-discount"></span>
+              </div>
+              <button type="button" class="cart-coupon__remove" id="coupon-remove-btn">
+                Remove
+              </button>
+            </div>
+          </section>
+
           <a href="index.html" class="btn btn--secondary cart-page__continue">Continue Shopping</a>
         </section>
 
@@ -143,7 +184,7 @@
             </div>
             <div class="cart-summary__row">
               <dt>Discount</dt>
-              <dd class="cart-summary__discount">− ₹0</dd>
+              <dd class="cart-summary__discount" id="summary-discount">− ₹0</dd>
             </div>
             <div class="cart-summary__row">
               <dt>Delivery</dt>
