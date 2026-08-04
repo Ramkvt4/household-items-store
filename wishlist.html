@@ -93,7 +93,7 @@
     </nav>
   </header>
 
-  <main id="main-content" class="account-page">
+  <main id="main-content" class="account-page" aria-busy="true">
     <div class="container">
       <nav class="breadcrumb" aria-label="Breadcrumb">
         <ol class="breadcrumb__list">
@@ -103,15 +103,27 @@
       </nav>
 
       <h1 class="account-page__title">Wishlist</h1>
-      <p class="account-page__subtitle">Products you save for later</p>
+      <p class="account-page__subtitle" id="wishlist-subtitle">Products you save for later</p>
 
-      <section class="account-empty" id="wishlist-empty" aria-labelledby="wishlist-empty-heading">
-        <div class="account-empty__icon" aria-hidden="true">♡</div>
+      <div class="account-loading" id="wishlist-loading">Loading your wishlist…</div>
+
+      <section class="account-empty" id="wishlist-empty" hidden aria-labelledby="wishlist-empty-heading">
+        <div class="account-empty__icon" aria-hidden="true">❤️</div>
         <h2 class="account-empty__title" id="wishlist-empty-heading">Your Wishlist is Empty</h2>
-        <p class="account-empty__text">
-          You haven’t saved any products yet. Wishlist is coming soon — keep browsing our appliances in the meantime.
-        </p>
+        <p class="account-empty__text">Browse products and save your favourites.</p>
         <a href="index.html#products" class="btn btn--primary">Continue Shopping</a>
+      </section>
+
+      <section class="account-error" id="wishlist-error" hidden aria-labelledby="wishlist-error-heading">
+        <div class="account-error__icon" aria-hidden="true">⚠️</div>
+        <h2 class="account-error__title" id="wishlist-error-heading">Unable to Load Wishlist</h2>
+        <p class="account-error__text" id="wishlist-error-text">Something went wrong while loading your wishlist. Please try again.</p>
+        <button type="button" class="btn btn--secondary" onclick="window.location.reload()">Try Again</button>
+      </section>
+
+      <section class="account-content" id="wishlist-content" hidden aria-labelledby="wishlist-list-heading">
+        <h2 id="wishlist-list-heading" class="visually-hidden">Saved products</h2>
+        <div class="wishlist-grid" id="wishlist-list"></div>
       </section>
     </div>
   </main>

@@ -8,6 +8,7 @@ const App = (() => {
   let heroInterval = null;
   let currentSlide = 0;
   let CartIntegration = null;
+  let WishlistIntegration = null;
 
   async function loadCartIntegration() {
     if (!CartIntegration) {
@@ -15,6 +16,14 @@ const App = (() => {
       window.CartIntegration = CartIntegration;
     }
     return CartIntegration;
+  }
+
+  async function loadWishlistIntegration() {
+    if (!WishlistIntegration) {
+      WishlistIntegration = await import('./modules/wishlist-integration.js');
+      window.WishlistIntegration = WishlistIntegration;
+    }
+    return WishlistIntegration;
   }
 
   async function init() {
@@ -38,6 +47,9 @@ const App = (() => {
 
     const cart = await loadCartIntegration();
     cart.initCartBadge();
+
+    const wishlist = await loadWishlistIntegration();
+    await wishlist.initWishlistIntegration();
 
     initHeroSlider();
     initMobileMenu();
@@ -151,6 +163,9 @@ const App = (() => {
 
     grid.innerHTML = productList.map((product) => createProductCard(product)).join('');
     bindProductEvents(grid, productList);
+    loadWishlistIntegration().then((wishlist) => {
+      wishlist.syncWishlistButtons(grid);
+    });
   }
 
   function createProductCard(product) {
@@ -169,6 +184,16 @@ const App = (() => {
         <div class="product-card__image-wrap" data-action="view" data-id="${product.id}">
           ${product.badge ? `<span class="product-card__badge">${product.badge}</span>` : ''}
           ${outOfStock ? `<span class="product-card__badge product-card__badge--stock">Out of Stock</span>` : ''}
+          <button
+            type="button"
+            class="product-card__wishlist"
+            data-action="toggle-wishlist"
+            data-id="${product.id}"
+            aria-label="Add to wishlist"
+            aria-pressed="false"
+          >
+            <span class="product-card__wishlist-icon" aria-hidden="true">♡</span>
+          </button>
           <img
             class="product-card__image"
             src="${image}"
@@ -220,6 +245,19 @@ const App = (() => {
 
         const cart = await loadCartIntegration();
         cart.handleAddToCart(product);
+      });
+    });
+
+    grid.querySelectorAll('[data-action="toggle-wishlist"]').forEach((btn) => {
+      btn.addEventListener('click', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const product = productList.find((p) => p.id === btn.dataset.id);
+        if (!product) return;
+
+        const wishlist = await loadWishlistIntegration();
+        await wishlist.handleToggleWishlist(product, btn);
       });
     });
   }

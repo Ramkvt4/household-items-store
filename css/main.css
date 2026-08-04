@@ -814,6 +814,53 @@ address {
 .product-card__badge--stock {
   top: auto;
   bottom: 0.75rem;
+}
+
+.product-card__wishlist {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.product-card__wishlist:hover,
+.product-card__wishlist:focus-visible {
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+  outline: none;
+}
+
+.product-card__wishlist:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.product-card__wishlist-icon {
+  font-size: 1.125rem;
+  line-height: 1;
+}
+
+.product-card__wishlist--active {
+  color: var(--color-danger);
+  border-color: rgba(231, 76, 60, 0.35);
+  background: #fff5f5;
+}
+
+.product-card__wishlist--active .product-card__wishlist-icon {
+  color: var(--color-danger);
+}
   left: 0.75rem;
   background: var(--color-secondary);
 }

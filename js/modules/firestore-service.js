@@ -131,4 +131,54 @@ export function getUserCartDocRef(userId) {
   return getDocRef(firebaseCollections.carts, userId);
 }
 
+/** Wishlist subcollection name under users/{uid} (Module 10). */
+export const WISHLIST_SUBCOLLECTION = 'wishlist';
+
+/**
+ * Collection reference for a user's wishlist.
+ * Path: users/{userId}/wishlist
+ * @param {string} userId
+ * @returns {import('firebase/firestore').CollectionReference}
+ */
+export function getUserWishlistCollectionRef(userId) {
+  if (!userId) {
+    throw new Error('[Firestore] userId is required for wishlist collection reference');
+  }
+
+  if (!db) {
+    throw new Error('[Firestore] Not initialized. Call initFirestore() first.');
+  }
+
+  return collection(db, firebaseCollections.users, userId, WISHLIST_SUBCOLLECTION);
+}
+
+/**
+ * Document reference for a wishlist item.
+ * Path: users/{userId}/wishlist/{productId}
+ * @param {string} userId
+ * @param {string} productId
+ * @returns {import('firebase/firestore').DocumentReference}
+ */
+export function getUserWishlistDocRef(userId, productId) {
+  if (!userId) {
+    throw new Error('[Firestore] userId is required for wishlist document reference');
+  }
+
+  if (!productId) {
+    throw new Error('[Firestore] productId is required for wishlist document reference');
+  }
+
+  if (!db) {
+    throw new Error('[Firestore] Not initialized. Call initFirestore() first.');
+  }
+
+  return doc(
+    db,
+    firebaseCollections.users,
+    userId,
+    WISHLIST_SUBCOLLECTION,
+    productId,
+  );
+}
+
 export { firebaseCollections as FIRESTORE_COLLECTIONS, isFirebaseConfigured };
